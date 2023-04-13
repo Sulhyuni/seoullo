@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seoullo.tour.mapper.TourMapper">
+
+	<!-- 리스트 기본 쿼리 : 검색조건에 맞게 sql 조립 -->
+	<select id="list" resultType="com.seoullo.tour.vo.TourVO">
+		<include refid="basic" />
+		<include refid="order" />
+	</select>
+	
+	<sql id="basic">
+		<if test="tag == null">
+			SELECT no, status, type, title, description, thumbnail
+			FROM tour WHERE
+			1 = 1
+			<if test="region != null">
+				AND region = #{region}
+			</if>
+			<if test="word != null">
+				AND title LIKE '%'||#{word}||'%'
+			</if>
+		</if>
+		<if test="tag != null">
+			SELECT tr.no, tr.status,
+			tr.type, tr.title, tr.description,
+			tr.thumbnail
+			FROM tour tr, tag tg
+			WHERE tr.no = tg.tourNO AND tg.tag =
+			#{tag}
+		</if>
+	</sql>
+
+	<sql id="order">
+		<if test="order != null">
+			ORDER BY ${order} desc
+		</if>
+		<if test="order == null">
+			ORDER BY regDate desc
+		</if>
+	</sql>
+	
+	<!-- 가이드의 본인 투어 리스트 -->
+	<select id="listByGuide" resultType="com.seoullo.tour.vo.TourVO">
+		SELECT no, status, type, title, description, thumbnail FROM tour WHERE guideId = #{id}
+		<include refid="order" />
+	</select>
+	
+	<!-- 리스트에서 함께 불러올 태그리스트 -->
+	<select id="taglist" resultType="String">
+		SELECT tag FROM tag WHERE tourNo = #{tourNo}
+	</select>
+	
+	<!-- 투어 보기 관련 쿼리 : tour, tourdate, schedule, tourpoint, checkpoint 순 -->
+	<select id="view" resultType="com.seoullo.tour.vo.TourVO">
+		SELECT no, status, type, title, region, mainImg, subImg, subtitle, content, meetLat, meetLng, meetPlace
+		FROM tour WHERE no = #{no}
+	</select>
+	
+	<select id="viewTourdate" resultType="com.seoullo.tour.vo.TourdateVO">
+		SELECT day, status, maxNum, reserveNum, priceA, priceB FROM tourdate WHERE tourNo = #{no}
+	</select>
+	<select id="viewSchedule" resultType="com.seoullo.tour.vo.ScheduleVO">
+		SELECT dayNum, starthour, startminute, schedule, description FROM schedule WHERE tourNo = #{no}
+		ORDER BY dayNum, scheduleNum
+	</select>
+	<select id="viewTourpoint" resultType="com.seoullo.tour.vo.TourpointVO">
+		SELECT image, title, content FROM tourpoint WHERE tourNo = #{no} ORDER BY no
+	</select>
+	<select id="viewCheckpoint" resultType="String">
+		SELECT content FROM checkpoint WHERE tourNo = #{no} ORDER BY no
+	</select>
+</mapper>

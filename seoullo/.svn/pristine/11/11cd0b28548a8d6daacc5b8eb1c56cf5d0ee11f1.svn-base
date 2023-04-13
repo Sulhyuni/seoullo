@@ -1,0 +1,53 @@
+package com.seoullo.review.service;
+
+import java.util.List;
+
+import com.seoullo.review.vo.ReviewVO;
+import com.webjjang.util.PageObject;
+
+public interface ReviewService {
+
+	// 리스트
+	public List<ReviewVO> list(PageObject pageObject);
+	
+	// 탭 내 리스트
+	public List<ReviewVO> listTab(PageObject pageObject, long TourNo);
+
+	// 보기
+	public ReviewVO view(long revNo, int inc);
+
+	// 후기 등록
+	public int writeReview(ReviewVO vo);
+
+	// 답글 등록
+	public int writeAnswer(ReviewVO vo);
+
+	// 수정
+	public int update(ReviewVO vo);
+
+	// 후기 삭제
+	public int deleteReview(long refNo, long bookNo);
+	
+	// 답글 삭제
+	public int deleteAnswer(long revNo);
+
+	// 후기 이미지 보기
+	public List<ReviewVO> viewImage(long no);
+
+	// 후기 이미지 등록
+	public int writeImage(ReviewVO vo);
+
+	// 후기 이미지 수정
+	public int updateImage(ReviewVO vo);
+	public int updateImageThm(long imgNo, long revNo);
+
+	// 후기 이미지 삭제
+	public int deleteImage(long imgNo);
+	
+	// 후기 추천 추가
+	public int writeLike(ReviewVO vo);
+
+	// 후기 추천 취소
+	public int deleteLike(ReviewVO vo);
+
+}

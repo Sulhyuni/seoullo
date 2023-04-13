@@ -1,0 +1,110 @@
+package com.seoullo.member.controller;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.seoullo.member.service.MemberService;
+import com.seoullo.member.vo.MemberVO;
+import com.webjjang.util.PageObject;
+
+import lombok.extern.log4j.Log4j;
+
+@Controller
+@RequestMapping("/member")
+@Log4j
+public class MemberController {
+	//**휴면 계정만들어야함!!!!
+
+	@Autowired
+	@Qualifier("memberServiceImpl")
+	private MemberService service;
+	String mem = "member";
+
+	// 로그인(memberVO)
+	@GetMapping("/login.do")
+	public String loginForm() {
+
+		log.info("로그인 폼------------------------");
+
+		return mem + "/login";
+	}
+
+	// 로그인 처리
+	@PostMapping("/login.do")
+	public String login(String id, String pw, HttpSession session) {
+		log.info("로그인 처리...........");
+		log.info("id=" + id + ",pw=" + pw);
+		
+		MemberVO vo = new MemberVO();
+		vo.setId(id);
+		vo.setPw(pw);
+		session.setAttribute("login", service.login(vo));
+
+		// 메인으로
+		return "redirect:/";
+
+	}
+
+	// 로그아웃 처리
+	@GetMapping("/logout.do")
+	public String logout(HttpSession session, RedirectAttributes rttr) {
+		session.removeAttribute("login");
+		
+		//로그아웃 되었을때 로그아웃 되었다고 메시지 하나 뜨게만들기!
+		
+		
+		//메인으로
+		return "redirect:/";
+	}
+	
+	//휴면계정처리 만들기
+	
+	//운영자의 리스트
+	@RequestMapping("/list.do")
+	public String list(@ModelAttribute("pageObject") PageObject pageObject, Model model) {
+		log.info("리스트 찍어요~~~");
+		model.addAttribute("list", service.list(pageObject));
+		return mem +"/list";
+	}
+	
+	//가이드의 결제 리스트
+	@RequestMapping("/guideList.do")
+	public String guideList(@ModelAttribute("pageObject") PageObject pageObject, Model model) {
+		log.info("가이드 리스트 찍어요~~~");
+		model.addAttribute("guideList", service.guideList(pageObject));
+		return mem +"/guideList";
+	}
+	
+
+	//회원가입 가이드(유효성 검사 만들기) 
+	
+	//회원가입일반 일반회원은 gradeNo값을 컨트롤러에서 넣기
+	
+	//아이디, 닉네임 중복검사
+	
+	// 운영자, 가이드, 일반회원의 상세보기 (MemberVO, paynentVO)
+	
+	//아이디 찾기
+	
+	//비밀번호 찾기
+	
+	//잊어버린 비밀번호를 찾아서 임시받고 변경하는법
+	
+	//회원의 비밀번호 변경하기 
+	
+	//가이드, 일반회원 정보변경
+	
+	//운영자의 정보변경
+
+	//회원들의 탈퇴인데 휴면으로 바꾸는 것.
+
+}

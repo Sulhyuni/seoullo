@@ -1,0 +1,44 @@
+package com.seoullo.cart.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import com.seoullo.cart.mapper.CartMapper;
+import com.seoullo.cart.vo.CartVO;
+
+import lombok.Setter;
+
+@Service
+@Qualifier("cartServiceImpl")
+public class CartServiceImpl implements CartService {
+	
+	@Setter(onMethod_ = @Autowired)
+	private CartMapper mapper;
+
+	@Override
+	public List<CartVO> list() {
+		return mapper.list();
+	}
+
+	@Override
+	public int add(CartVO vo) {
+		return mapper.add(vo);
+	}
+
+	@Override
+	public int update(CartVO vo) {
+		return mapper.update(vo);
+	}
+
+	@Override
+	public int delete(List<Long> nos) {
+	    int result = 0;
+	    for (Long no : nos) {
+	        result += mapper.delete(no);
+	    }
+	    return result;
+	}
+
+}

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seoullo.event.mapper.EventMapper">
+
+<select id="list" resultType="com.seoullo.event.vo.EventVO">
+select e_no,e_title,img,e_startDate,e_endDate,e_writeDate,e_date,e_hit,filename
+	from(
+		select rownum rnum, e_no,e_title,img,e_startDate,e_endDate,e_writeDate,e_date,e_hit,filename
+			from(
+				select e.e_no,e.e_title,e.img,e.e_startDate,e.e_endDate,e.e_writeDate,e.e_date,e.e_hit,i.filename
+					from event e,imgfile i
+					where (i.main=1) and (e.e_no = i.e_no)
+					order by e_no desc
+			) 
+		)
+	 	where rnum between #{startRow} and #{endRow}
+</select>
+
+<select id="getTotalRow" resultType="Long">
+		select count(*) from event
+		
+	</select>
+
+<select id="view" resultType="com.seoullo.event.vo.EventVO">
+	select e.e_no,e.e_title,e_content,e.img,e.e_startDate,e.e_endDate,e.e_writeDate,e.e_date,e.e_hit,i.filename,m.id
+	from event e,imgfile i,member m,applyevent ap
+	where (e.e_no = i.e_no) and (ap.id = m.id)
+</select>
+
+<select id="viewFile">
+	select fileno,filename,main
+	from imgfile
+	where e_no=#{e_no}
+</select>
+<update id="increase">
+		update event set hit=hit+1
+		where e_no=#{e_no}
+	</update>
+<insert id="write">
+insert into event(e_no,e_title,e_content,id,e_startDate,e_endDate,e_date,img,e_hit)
+values(#{e_no},#{e_title},#{e_content},#{id},#{e_startDate},#{e_endDate},#{e_date},#{img},#{e_hit});
+</insert>
+
+<insert id="writeFile">
+insert into imgfile(fileno,e_no,filename,main)
+values(#{fileno},#{e_no},#{filename},#{main})
+</insert>
+
+<update id="update">
+
+    update event set e_title =#{e_title}, e_content = #{e_content},e_startDate=#{e_startDate},
+    e_endDate=#{e_endDate},e_date=#{e_date}
+		where e_no = #{e_no}
+</update>
+
+<update id="updateFile">
+  update imgfile set fileName = #{fileName}
+	where fileno = #{fileno}
+    
+</update>
+<update id="mainDel">
+	update imgfile set main =0
+	where e_no=#{e_no}
+</update>
+<update id="main">
+	update imgfile set main =1
+	where fileno =#{fileno}
+</update>
+
+<delete id="delete">
+	delete from event
+	where e_no=#{e_no}
+</delete>
+<delete id="deleteFile">
+	delete from imgfile
+	where fileno=#{fileno}
+</delete>
+
+</mapper>

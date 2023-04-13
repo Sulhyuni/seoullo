@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seoullo.review.mapper.ReviewMapper">
+
+	<select id="list" resultType="com.seoullo.review.vo.ReviewVO">
+	select revNo, title, rating, id, nickname, gradeNo, gradeName, writeDate, hit, refNo, ordNo, replyCnt, likeCnt
+	from (
+		select rownum rnum, revNo, title, rating, id, nickname, gradeNo, gradeName, writeDate, hit, refNo, ordNo, replyCnt, likeCnt
+		from (
+			select r.revNo, r.title, r.rating, r.id, m.nickname, m.gradeNo, g.gradeName, r.writeDate, r.hit, r.refNo, r.ordNo, r.levNo, r.replyCnt, r.likeCnt
+			from review r, member m, grade g
+			where r.id = m.id and m.gradeNo = g.gradeNo
+			<include refid="search" />
+			order by r.refNo desc, r.ordNo asc
+		)
+	)
+	where rnum between #{startRow} and #{endRow}
+	</select>
+	
+	<select id="getTotalRow" resultType="Long">
+	select count(*)
+	from review
+	<include refid="search"></include>
+	</select>
+	
+	<sql id="search">
+		<if test="word !=null and word !=''.toString()">
+			where 1 = 0
+			<if test="key.indexOf('t'.toString()) >= 0">
+				or title like '%' || #{word} || '%'
+			</if>
+			<if test="key.indexOf('c'.toString()) >= 0">
+				or content like '%' || #{word} || '%'
+			</if>
+			<if test="key.indexOf('w'.toString()) >= 0">
+				or writer like '%' || #{word} || '%'
+			</if>
+		</if>
+	</sql>
+	
+	<select id="view" resultType="com.seoullo.review.vo.ReviewVO">
+	select r.revNo, r.title, r.content, r.rating, r.id, m.nickname, m.gradeNo, g.gradeName, r.writeDate, r.hit, r.refNo, r.ordNo, r.levNo, r.replyCnt, r.likeCnt
+	from review r, member m, grade g
+	where (revNo = #{revNo}) and r.id = m.id and m.gradeNo = g.gradeNo
+	</select>
+	
+	<update id="increase">
+	update review set hit = hit + 1
+	where revNo = #{revNo}
+	</update>
+	
+	<!-- tourNo 수정하기 -->
+	<insert id="writeReview">
+	insert into review(revNo, tourNo, title, content, rating, id, refNo, ordNo, levNo)
+	values(review_seq.nextval, 1, #{title}, #{content}, #{rating}, #{id}, review_seq.nextval, 1, 0)
+	</insert>
+	
+	<!-- tourNo 수정하기 -->
+	<insert id="writeAnswer">
+	insert into review(revNo, tourNo, title, content, id, refNo, ordNo, levNo)
+	values(review_seq.nextval, 1, #{title}, #{content}, #{id}, #{refNo}, #{ordNo}, 1)
+	</insert>
+	
+	<update id="increaseOrdNo">
+	update review set ordNo = ordNo + 1
+	where refNo = #{refNo} and ordNo >= #{ordNo}
+	</update> 
+
+</mapper>

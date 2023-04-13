@@ -1,0 +1,292 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pageNav" tagdir="/WEB-INF/tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>가이드 회원가입</title>
+<style type="text/css">
+/* 닉네임이 중복이 아니면 */
+.nick_input_re_1, .id_input_re_1 {
+	color: green;
+	display: none;
+}
+/* 닉네임이 중복이면 */
+.nick_input_re_2, .id_input_re_2 {
+	color: red;
+	display: none;
+}
+
+#email, #id:invalid {
+	border: 3px solid red;
+}
+</style>
+<script type="text/javascript">
+	$(function() {
+		//닉네임 중복검사 propertychange change keyup paste input-이게 들어가야함..
+		$('#nickName').on(
+				"propertychange change keyup paste input",
+				function() {
+					//console.log("keyup 테스트");
+					//여기부터 ajax
+					var nickName = $('#nickName').val();
+					var data = {
+						nickName : nickName
+					}
+
+					$.ajax({
+						type : "post",
+						url : "/member/checkNickName",
+						data : data,
+						success : function(result) {
+							//console.log("성공여부:" + result);
+							if (result != 'fail') {
+								$('.nick_input_re_1').css("display",
+										"inline-block");
+								$('.nick_input_re_2').css("display", "none");
+							} else {
+								$('.nick_input_re_2').css("display",
+										"inline-block");
+								$('.nick_input_re_1').css("display", "none");
+							}//end if& else
+						}//end sucess 
+
+					}); //end ajax
+
+				});//end nick 검사 function
+//아이디 중복검사
+	$(function() {
+		//중복검사 propertychange change keyup paste input-이게 들어가야함..
+		$('#id').on("propertychange change keyup paste input", function() {
+					//console.log("keyup 테스트");
+					//여기부터 ajax
+					var id = $('#id').val();
+					var data = {
+						id : id
+					}
+
+					$.ajax({
+						type : "post",
+						url : "/member/checkId",
+						data : data,
+						success : function(result) {
+							console.log("성공여부:" + result);
+ 							//if (result != 'fail') {
+// 								$('.id_input_re_1').css("display",
+// 										"inline-block");
+// 								$('.id_input_re_2').css("display", "none");
+// 							} else {
+// 								$('.id_input_re_2').css("display",
+// 										"inline-block");
+// 								$('.id_input_re_1').css("display", "none");
+							}//end if& else
+						}//end sucess 
+
+					}); //end ajax
+
+				});//end nick 검사 function
+
+		//취소하는 것.. 뷰로 돌아가기
+		$("#cancelBtn").click(function() {
+			location.href = "/";
+		});
+		//가입완료
+		$("#welcom").click(function() {
+			location.href = "/login.do";
+		});
+
+		//tel글자수
+		$('#updateBtn').click(function() {
+			var tel = $("#tel").val();
+			if (tel.length > 14) {
+				alert("입력하신 연락처를 다시한번 더 확인해 주세요.");
+				return false;
+			}
+		});
+
+		//성별선택
+		let gender = '${gender}';
+		$("#gender").val(gender).prop("selected", true);
+		
+		//입력 글자수 제한.
+		$(document).ready(function() {
+			$('#nickName').on('keyup', function() {
+				$('#nick_max_cnt').html("(" + $(this).val().length + "/10)");
+				if ($(this).val().length > 10) {
+					$(this).val($(this).val().substring(0, 10));
+					$('#nick_max_cnt').html("(10/10)")
+				}//end if	
+			});//end on
+		});// end ready
+
+		//모달을 누르면 다 처리되어서 뷰로 자료를 보낸다.
+		function (saveData) {
+			saveData.action = "member/guidePay";
+			saveData.method = "post";
+			saveData.submit();
+		}
+
+	});
+</script>
+</head>
+<body>
+	<div class="container">
+		<form action="guideWelcom" method="post">
+			<h1>가이드 회원가입 기입란</h1>
+			<!-- 들어가야하나.. -->
+			<input type="hidden" name="regDate" value="${vo.regDate}">
+
+			<!-- insert into member(id,name,gradeNo,nickName,age,pw,tel,paymentNo,email,gender,regDate) -->
+
+
+
+
+
+
+
+			<!-- 이메일 인증받을 곳. -->
+			<div style="display: flex; flex-wrap: wrap;">
+				<div class="form-group" style="width: 50%;">
+					<label>이메일</label>
+					<input name="email" id="email" class="form-control"pattern="[A-Za-z0-9]+"
+						placeholder="이메일 주소는 사용되는 것으로 입력을 하셔야합니다.">
+
+				</div>
+				<select class="form-control" id="add" name="add">
+					<option value="1">@naver.com</option>
+					<option value="2">@daum.net</option>
+
+				</select>
+			</div>
+
+			<div class="form-group">
+				<label>회원의 이름</label> <input name="name" id="name"
+					class="form-control">
+			</div>
+
+			<div class="form-group">
+				<label>아이디</label> <input name="id" id="id" class="form-control"> 
+				<span class="id_input_re_1">사용가능한
+					아이디 입니다.</span>
+				 <span class="id_input_re_2">이미 타인이 사용하는 아이디 입니다.</span>
+			</div>
+
+			<div class="form-group">
+				<label>비밀번호</label> <input name="pw1" id="pw1" class="form-control"
+					type="password" 
+					placeholder="비밀번호를 입력해주세요(조건쓰기)">
+					 <label>비밀번호 확인</label>
+					  <input
+					name="pw2" id="pw2" type="password" class="form-control" placeholder="비밀번호를 한번 더 입력해주세요.">
+			</div>
+
+			<div class="form-group">
+				<label>닉네임</label>
+				<!-- 특수문자는 입력이 안돼게 해놓음 -->
+				<input name="nickName" id="nickName" class="form-control"
+					placeholder="한글과 영문 숫자만 입력해주세요" value="${view.nickName }"
+					pattern="[ㄱ-ㅎㅏ-ㅣ가-힣A-Za-z0-9]+">
+				<p id="nick_max_cnt" style="float: right;">(/10)</p>
+			</div>
+			<span class="nick_input_re_1">사용가능한 닉네임 입니다.</span> <span
+				class="nick_input_re_2">이미 존재하는 닉네임 입니다.</span>
+
+			<div class="form-group">
+				<label>생년월일</label> <input name="age" id="age" class="form-control">
+			</div>
+
+
+			<div class="form-group">
+				<label for="gender">성별</label> <select class="form-control"
+					id="gender" name="gender">
+					<option value="1">여성</option>
+					<option value="2">남성</option>
+				</select>
+			</div>
+
+
+			<div class="form-group">
+				<label>연락처</label> <input name="tel" id="tel" class="form-control"
+					value="${view.tel }" placeholder="-를 제외하고 입력해주세요.">
+			</div>
+
+			<div class="form-group-4">
+				<label for="guideSelect">가이드 종류선택</label>
+				<h6>일반가이드 : 좋은점 블라블라</h6>
+				<br />
+				<h6>슈퍼가이드 : 블라블라</h6>
+				<select class="form-control" id="guideSelect" name="guideSelect">
+					<option value="1">일반 가이드</option>
+					<option value="2">슈퍼 가이드</option>
+
+				</select>
+			</div>
+
+		</form>
+
+		<form action="guidePay" method="post" id="guidePay">
+			<div class="form-group-4">
+				<label for="cardSelect">카드회사선택</label> <select class="form-control"
+					id="cardSelect" name="cardSelect">
+					<option value="1">BC</option>
+					<option value="2">롯데</option>
+					<option value="3">삼성</option>
+					<option value="4">국민</option>
+					<option value="5">카카오카드</option>
+					<option value="6">신한</option>
+				</select>
+				<!-- 카드종류 옆에 붙도록 작성해야함. 사이즈 체크하고 주석지우기-->
+				<div class="form-group-2">
+					<label for="mothSelect">카드개월수 선택</label> <select
+						class="form-control" id="mothSelect" name="mothSelect">
+						<option value="1">2개월</option>
+						<option value="2">3개월</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label for="cardNo">카드번호</label> <input name="cardNo" id="cardNo"
+					class="form-control ">
+			</div>
+			<p class="total">
+				최종결제금액<span class="bold text_red" id="total"></span>원
+			</p>
+			<div style="float: right;">
+				<button type="button" class="btn btn-info btn-lg "
+					data-toggle="modal" data-target="#myModal">결제하기</button>
+				<button type="reset">새로입력</button>
+				<button id="cancleBtn">취소</button>
+			</div>
+		</form>
+
+		<!--** 결제를 누르면 guidepay가 되고, 확인을 누르면 가입이 되도록 만들기.. 금액에 따라서 슈퍼와 일반이 정해져야 하는데.. 그렇게 만들기 -->
+		<!-- Modal -->
+		<div class="modal fade" id="myModal" role="dialog">
+			<div class="modal-dialog">
+
+				<!-- Modal content-->
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">이젠서울 결제창</h4>
+					</div>
+					<div class="modal-body">
+						<p>결제가 완료되었습니다. 확인을 누르시면 로그인 페이지로 이동합니다.</p>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-default" data-dismiss="modal"
+							id="pBtn" onclick="btn btn-info btn-lg(saveData)">확인</button>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+
+
+	</div>
+</body>
+</html>

@@ -1,0 +1,155 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@taglib prefix="decorator"
+	uri="http://www.opensymphony.com/sitemesh/decorator"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<!DOCTYPE html>
+<html>
+
+
+<head>
+    <meta charset="utf-8">
+     <title>EZENSEOULLO - <decorator:title/></title>
+    <meta content="width=device-width, initial-scale=1.0" name="viewport">
+    <meta content="Free HTML Templates" name="keywords">
+    <meta content="Free HTML Templates" name="description">
+
+    <!-- Favicon -->
+    <link href="/resources/img/favicon.png" rel="icon">
+
+    <!-- Google Web Fonts -->
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet"> 
+
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.10.0/css/all.min.css" rel="stylesheet">
+
+    <!-- Libraries Stylesheet -->
+    <link href="/resources/lib/owlcarousel/assets/owl.carousel.min.css" rel="stylesheet">
+	<link href="/resources/css/style.css" rel="stylesheet">
+   
+
+	<!-- CDN 방식의 Google Icon 라이브러리 등록 -->
+	<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+	<!-- 임시 라이브러리  -->
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>	
+	<!-- datepicker -->
+
+    <decorator:head />
+</head>
+
+<header>
+ <!-- Navbar Start -->
+    <div class="container-fluid position-relative nav-bar p-0">
+        <div class="container-lg position-relative p-0 px-lg-3" style="z-index: 9;">
+            <nav class="navbar navbar-expand-lg bg-light navbar-light shadow-lg py-3 py-lg-0 pl-3 pl-lg-5">
+                <a href="/" class="navbar-brand">
+                    <h1 class="m-0 text-primary"><span class="text-dark">EZEN</span>SEOUL<span class="text-dark">LO</span></h1>
+                </a>
+                <button type="button" class="navbar-toggler" data-toggle="collapse" data-target="#navbarCollapse">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-between px-3" id="navbarCollapse">
+                    <ul class="navbar-nav ml-auto py-0">
+                        <li><a href="/" class="nav-item nav-link active">Home</a></li>
+                        <li><a href="/notice/list.do" class="nav-item nav-link">공지</a></li>
+                        <li><a href="/event/event.do" class="nav-item nav-link">이벤트</a></li>
+                        <li><a href="/tour/list.do" class="nav-item nav-link">투어</a></li>
+                        <li><a href="/book/list.do" class="nav-item nav-link">예약</a></li>
+                        <li><a href="/cart/list.do" class="nav-item nav-link">장바구니</a></li>
+                        <li><a href="/qna/list.do" class="nav-item nav-link">투어Q&A</a></li>
+                        <li><a href="/siteqna/list.do" class="nav-item nav-link">사이트Q&A</a></li>
+                        <li><a href="/anonymous/list.do" class="nav-item nav-link">익명</a></li>
+                        <li><a href="/review/list.do" class="nav-item nav-link">후기</a></li>
+                 
+                        <c:if test="${empty login }">
+                        	<li><a href="/member/login.do" class="nav-item nav-link">로그인</a></li>
+                        </c:if>
+                        
+                        <c:if test="${!empty login }">
+	                        <c:if test="${login.gradeNo == 1 }">
+	                       		<li><a href="/member/view.do" class="nav-item nav-link">마이페이지</a></li>             
+	                        	<li><a href="/member/logout.do" class="nav-item nav-link">로그아웃</a></li>
+	                        </c:if>
+	                        <c:if test="${login.gradeNo == 2 || login.gradeNo == 3}">
+	                        	<li><a href="/member/guideView.do" class="nav-item nav-link">마이페이지</a></li>             
+	                        	<li><a href="/member/logout.do" class="nav-item nav-link">로그아웃</a></li>
+	                        </c:if>
+	                        <c:if test="${login.gradeNo == 9 }">
+	                       		<li><a href="/member/list.do" class="nav-item nav-link">마이페이지</a></li>             
+	                        	<li><a href="/member/logout.do" class="nav-item nav-link">로그아웃</a></li>
+	                        </c:if>                   	
+                        </c:if>
+                    </ul>
+                    </div>
+           			</nav>
+               </div>
+        </div>
+    <!-- Navbar End -->
+    
+
+    <br>
+     <br>
+      <br>
+      
+</header>
+
+
+
+
+<decorator:body>
+
+
+
+</decorator:body>
+
+
+
+		
+<!-- Footer start -->
+<footer>
+    <div class="container-fluid bg-dark text-white border-top py-4 px-sm-3 px-md-5" style="border-color: rgba(256, 256, 256, .1) !important; margin-top:70px;">
+        <div class="row">
+        	<div class="col-lg-4 text-center text-md-left mb-3 mb-md-0">
+        	<h1 class="text-primary halla"><span class="halla" >EZEN</span>SEOUL<span class="halla" >LO</span></h1>
+        	</div>
+            <div class="col-lg-4 text-center  mb-3 mb-md-0">
+                <p class="m-0 text-white-50" style="padding-top:10px">Copyright &copy; ezenseoullo. All Rights Reserved.</a>
+                </p>
+            </div>
+            <div class="col-lg-4 text-center text-md-right">
+                <p class="m-0 text-white-50" style="padding-top:10px">Designed by EZEN team1</p>
+            </div>
+        </div>
+    </div>
+</footer>
+<!-- Footer End -->
+
+
+	<!-- Scroll to Top Button-->
+	<!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="fa fa-angle-double-up"></i></a>
+
+
+    <!-- JavaScript Libraries -->
+    <script src="/resources/lib/easing/easing.min.js"></script>
+    <script src="/resources/lib/owlcarousel/owl.carousel.min.js"></script>
+    <script src="/resources/lib/tempusdominus/js/moment.min.js"></script>
+    <script src="/resources/lib/tempusdominus/js/moment-timezone.min.js"></script>
+    <script src="/resources/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js"></script>
+
+    <!-- Contact Javascript File -->
+    <script src="/resources/mail/jqBootstrapValidation.min.js"></script>
+    <script src="/resources/mail/contact.js"></script>
+
+    <!-- Template Javascript -->
+<!--     <script src="/resources/js/main.js"></script> -->
+    <script src="/resources/js/main2.js"></script>
+
+</body>
+
+</html>

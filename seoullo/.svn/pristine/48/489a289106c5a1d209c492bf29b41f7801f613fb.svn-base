@@ -1,0 +1,38 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Member's login</title>
+</head>
+<body>
+<div>
+<div>
+<h2>로그인 페이지</h2>
+</div>
+<form action="login.do" method="post">
+
+<div class="form-group">
+<label>아이디</label>
+<input type="text" name="id" id="id">
+</div>
+<div class="form-group">
+<label>비밀번호</label>
+<input type="password" name="pw" id="pw">
+</div>
+
+<div>
+<button type="submit" class="btn loginBtn">로그인</button>
+
+<!-- 아이디, 비밀번호 찾기, 회원가입 넣기 (카카오로 회원가입도 넣어야함.)-->
+<div>
+<button type="button">아이디 찾기</button>
+<button type="button">비밀번호 찾기</button>
+</div>
+<button type="button">회원가입</button>
+</div>
+</form>
+</div>
+</body>
+</html>

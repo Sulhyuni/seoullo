@@ -1,0 +1,27 @@
+package com.seoullo.qna.service;
+
+import java.util.List;
+
+import com.seoullo.qna.vo.QnaVO;
+
+public interface QnaService {
+	
+	//리스트
+		public List<QnaVO>list();
+		
+		//보기
+		public QnaVO view(long no, long inc);
+		
+		//질문
+		public int write(QnaVO vo);
+
+		//답변
+		public int answer(QnaVO vo);
+		
+		//수정
+		public int update(QnaVO vo);
+		
+		//삭제
+		public int delete(QnaVO vo);
+
+}

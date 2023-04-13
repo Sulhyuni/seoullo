@@ -1,0 +1,224 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pageNav" tagdir="/WEB-INF/tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>장바구니</title>
+<style type="text/css">
+.peopleA, .peopleB{
+	border: solid 1px #ccc;
+	text-align: center;
+	width: 20px;
+	font-weight: bold;
+	margin-left: -5px
+}
+input:focus,
+button:active{
+	outline: none;
+}
+button:focus,
+button:active{
+	outline: none;
+}
+a:focus{
+	outline: none;
+}
+.tourInfoDiv{
+	border-top: solid 1px #aaa;
+	border-bottom: solid 1px #aaa;
+	padding : 10px 0;
+	margin-bottom: 5px;
+}
+#addBtn{
+	color: #4B8A08;
+	font-weight: bold;
+	margin: 0 5px;
+}
+.bookBtn{
+	background: #4B8A08;
+	color: white;
+	font-weight: bold;
+}
+.minus_btnB
+,.plus_btnB
+,.minus_btnA
+,.plus_btnA {
+	outline: none;
+	height: 22px;
+}
+.plus_btnA, .plus_btnB{
+	margin-left:-4px;
+}
+#imgDiv{
+	width: 80px;
+	height : 80px;
+	border-radius: 70%;
+	overflow: hidden;
+	margin-left: 60px;
+}
+.img{
+	width: 100%;
+	height: 100%;
+}
+#payPrice{
+	outline: none;
+	border: none;
+	font-size: 20px;
+	font-weight: bold;
+	color: #d8421c;
+	width: 150px;
+}
+#tourPrice{
+	border: none;
+	text-align: center;
+}
+</style>
+<script type="text/javascript">
+$(function(){
+	
+	var sum = 0;
+	$("input[id=tourPrice]").each(function() {
+		sum += parseInt($(this).val());
+	});
+	$("#payPrice").val(sum);
+	
+	// 수량 변경하는 버튼
+	$(".plus_btnA").click(function(){
+		let peopleA = $(this).parent("div").find("input.peopleA").val();
+		$(this).parent("div").find("input.peopleA").val(++peopleA);
+		calculateTourPrice($(this));
+	});
+	$(".minus_btnA").click(function(){
+		let peopleA = $(this).parent("div").find("input.peopleA").val();
+		if(peopleA > 0) {
+			$(this).parent("div").find("input.peopleA").val(--peopleA);
+			calculateTourPrice($(this));
+		}
+	});
+	$(".plus_btnB").click(function(){
+		let peopleB = $(this).parent("div").find("input.peopleB").val();
+		$(this).parent("div").find("input.peopleB").val(++peopleB);
+		calculateTourPrice($(this));
+	});
+	$(".minus_btnB").click(function(){
+		let peopleB = $(this).parent("div").find("input.peopleB").val();
+		if(peopleB > 0) {
+			$(this).parent("div").find("input.peopleB").val(--peopleB);
+			calculateTourPrice($(this));
+		}
+	});
+	
+	// 총 결제금액 업데이트
+	function calculateTourPrice(btn) {
+ 		var priceA = parseInt(btn.parent("div").find("input.priceA").val());
+		var priceB = parseInt(btn.parent("div").find("input.priceB").val());
+		var peopleA = parseInt(btn.parent("div").find("input.peopleA").val());
+		var peopleB = parseInt(btn.parent("div").find("input.peopleB").val());
+// 		alert(priceA+" "+priceB+" "+peopleA+" "+peopleB)
+		var tourPrice = (priceA * peopleA) + (priceB * peopleB);
+		$(btn.parent("div")).find("input#tourPrice").val(tourPrice);
+		
+		var sum = 0;
+		$("input[id=tourPrice]").each(function() {
+			sum += parseInt($(this).val());
+		});
+		$("#payPrice").val(sum);
+	}
+	
+});
+</script>
+</head>
+<body>
+	<div class="container">
+		<div>
+			<c:if test="${!empty list }">
+				<div class="row tourInfoDiv">
+					<div class="col-md-1  all_check_input_div">
+						<span><input type="checkbox" class="all_check_input" checked="checked"></span>
+					</div>
+					<div class="col-md-11" align="center" style="padding: 3px 0;">
+						<span>투어상품정보</span>
+					</div>
+				</div>
+			</c:if>
+			
+			<!-- 장바구니 없을 때 -->
+			<c:if test="${empty list }">
+				<div align="center" style="margin: 100px 0;">
+					<h1 style="color: #4B8A08">장바구니에 담긴 상품이 없습니다.</h1>
+					<span style="color: #gray; font-size:15px;">담기를 원하시면 아래 <span style="font-size:15px; font-weight: bold;">투어예약하기</span> 버튼을 눌러주세요.</span>
+					<br/><br/><br/>
+					<a href="/tour/list.do"><button class="btn btn-default btn-lg">투어 담으러 가기</button></a>
+				</div>
+			</c:if>			
+		
+			<!-- 장바구니 한칸 -->	
+			<c:forEach items="${list }" var="vo">
+				<div id="allDiv" class="row" style="padding:10px 0; border-bottom: solid 1px #aaa;">
+							
+					<div class="col-md-1 cart_info_div">
+						<input type="checkbox" class="checkbox" checked="checked">
+						<input type="hidden" class="tourPrice" value="${vo.tourPrice }">
+					</div>
+					
+					<div class="col-md-3">
+						<div id="imgDiv">
+							<img src="${vo.thumbnail }" class="img" alt="${vo.thumbnail }">
+						</div>
+					</div>
+					
+					<div class="col-md-4">
+						<div>[ ${vo.type } ] </div>
+						<div>[ ${vo.title } ]</div> 
+						<div>[ ${vo.region } ]</div> 
+						<div>
+							<input class="priceA" type="hidden" value="${vo.priceA }">
+							[ 대인 / <fmt:formatNumber pattern="#,###" value="${vo.priceA }" /> ]
+							<button class="minus_btnA btn btn-default btn-xs">－</button>	
+							<input type="text" class="peopleA" name="peopleA" readonly="readonly" value="${vo.peopleA }">
+							<button class="plus_btnA btn btn-default btn-xs">＋</button>		
+							<input class="priceB" type="hidden" value="${vo.priceB }">
+							[ 소인 / <fmt:formatNumber pattern="#,###" value="${vo.priceB }" /> ]
+							<button class="minus_btnB btn btn-default btn-xs">－</button>
+							<input type="text" class="peopleB" name="peopleB" readonly="readonly" value="${vo.peopleB }">
+							<button class="plus_btnB btn btn-default btn-xs">＋</button><br/>												
+							[ 투어가격 : <input style="width: 50px; font-weight: bold;" id="tourPrice" value="${vo.tourPrice }"> ]
+						</div>
+					</div>
+					
+					<div id="priceDiv" class="col-md-2" align="center">
+						<br/><br/>
+						<span style="color:#d8421c; font-weight: bold;"><fmt:formatDate pattern="yyyy-MM-dd" value="${vo.day }"/></span><br/>
+					</div>
+					
+					<div class="col-md-2" align="right">
+						<br/>
+						<button class="btn btn-default btn-sm bookBtn">예약</button>
+						<button class="btn btn-default btn-sm deleteBtn">X</button>
+					</div>				
+				</div>				
+			</c:forEach>
+		</div>
+		
+		<c:if test="${!empty list }">
+			<div class="row">
+				<div class="col-md-6">
+					<button class="btn btn-default btn-sm deleteBtn" style="margin: 5px 0;">선택삭제</button>
+				</div>
+				<div class="col-md-6" align="right" style="margin-top: 10px">
+					<span style="font-size: 14px; font-weight: bold;">총 결제금액  <input id="payPrice" value=""> 원</span>
+				</div>
+			</div>
+			<div style="text-align: center; margin: 30px 0 0 0">
+				<a href="/tour/list.do"><button id="addBtn" class="btn btn-default btn-lg">투어 더 담기</button></a>
+				<button class="btn btn-default btn-lg bookBtn">예약하기</button>
+			</div>
+		</c:if>
+		
+	</div>
+</body>
+</html>

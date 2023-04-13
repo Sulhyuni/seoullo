@@ -1,0 +1,99 @@
+package com.seoullo.event.controller;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.MultipartRequest;
+
+import com.seoullo.event.service.EventService;
+import com.seoullo.event.vo.EventVO;
+import com.seoullo.event.vo.ImgfileVO;
+import com.webjjang.util.PageObject;
+import com.webjjang.util.file.FileUtil;
+
+import lombok.extern.log4j.Log4j;
+
+@Controller
+@Log4j
+@RequestMapping("/event")
+public class EventController {
+	
+	//파일 경로 선언
+	String path ="/upload/event";
+	
+	@Autowired
+	@Qualifier("eventServiceImpl")
+	private EventService service;
+	
+	@RequestMapping("/list.do")
+	public String list(@ModelAttribute PageObject pageObject,Model model){
+		log.info("이벤트 리스트---------------------");
+		pageObject.setPerPageNum(9);
+		model.addAttribute("list", service.list(pageObject));
+		return "event/list";
+	}
+	
+	@RequestMapping("/view.do")
+	public String view(Long no,Model model,int inc) {
+		log.info("이벤트 게시판 보기-----------------");
+		EventVO vo=service.view(no, inc);
+		//파일과 text 데이터 가져오기. 
+		model.addAttribute("vo", service.view(no, inc));
+		model.addAttribute("list", service.viewFile(no));
+		return "event/view";
+	}
+	@GetMapping("/write.do")
+	public String writeForm() {
+		log.info("이벤트 등록 폼  -----------------");
+
+		return "event/write";
+	}
+	
+	@PostMapping("/write.do")
+	public String write(EventVO vo,MultipartFile filename ,HttpServletRequest request) throws Exception {
+	    log.info("이벤트 등록 처리 -----------------");
+
+		//String fileName = FileUtil.upload(path, vo.getFilename(), request);
+	//	log.info(fileName);
+		
+		
+		log.info(vo);
+//	    //이미지 파일 정보 수집
+//	    List<ImgfileVO> list = new ArrayList<ImgfileVO>();
+	    log.info("vo++++++++++++++" + vo);
+	//    log.info("main++++++++++++++" + main);
+	    log.info("filename++++++++++++++" + request);
+//	    String fileName = FileUtil.upload(path, vo.getFilename(), request);
+//		vo.setFileName(fileName);
+	    // 이미지 파일 여러개 올리기
+//	    for (int i = 0; i < list.size(); i++) {
+//	        MultipartFile mm = filename[i];
+//	        if (!mm.isEmpty()) {
+//	            ImgfileVO ivo = new ImgfileVO();
+//	            ivo.setFilename(FileUtil.upload(path, mm, request));
+//	            ivo.setMain((i == main) ? 1 : 0);
+//	            list.add(ivo);
+//	        }
+//	    }
+	    //db 저장
+	//    service.write(vo, list);
+
+	    Thread.sleep(500);
+	    return "redirect:list.do";
+	}
+
+
+}

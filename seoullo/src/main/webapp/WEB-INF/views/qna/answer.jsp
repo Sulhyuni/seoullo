@@ -1,0 +1,62 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>QnA</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+<style type="text/css">
+
+hr{
+  	  border: 0;
+   	  height: 2px;
+   	  background: #ccc;
+  	}
+  	
+</style>
+</head>
+<body>
+<div class="container">
+	 <div class="col-md-12">
+		<h1>QnA answer</h1>
+	</div>
+	<div class="col-md-12">
+		<hr>
+	</div>
+	
+	<div class="card-body">
+		<form action="answer.do" method="post" id="answerForm">
+				
+			<input type="hidden" name="id" value="${login.id }">
+			<input type="hidden" name="refNo" value="${vo.refNo }">
+			<input type="hidden" name="ordNo" value="${vo.ordNo }">
+<%-- 			<input type="hidden" name="parentNo" value="${vo.parentNo }"> --%>
+			<input type="hidden" name="qnaNo" value="${vo.qnaNo }">
+			<input type="hidden" name="tourNo" value="${vo.tourNo }">
+			<input type="hidden" name="region" value="${vo.region }">
+			<input type="hidden" name="status" value="응답">
+			
+			<div class="form-group">
+				<label>답글 제목</label>
+				<input type="text" name="title" class="form-control" id="title" value="[답글]${vo.title }" readonly="readonly"/>
+			</div>
+			<div class="form-group">
+				<label>질문 내용</label>
+				<textarea rows="5" name="content" class="form-control" id="content"></textarea>
+			</div>
+<!-- 			<div class="form-group"> -->
+<!-- 				<label>작성자</label> -->
+<!-- 				<input name="id" class="form-control" id="id"> -->
+<!-- 			</div> -->
+			
+			<button class="btn btn-default">등록</button>
+			<button type="reset"  class="btn btn-default">새로입력</button>
+			<button type="button" class="btn btn-default" onclick="history.back()">취소</button>
+		</form>
+	</div>
+
+ </div>
+</body>
+</html>

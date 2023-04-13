@@ -1,0 +1,5 @@
+package com.seoullo.qna.controller;
+
+public class QnaController {
+
+}

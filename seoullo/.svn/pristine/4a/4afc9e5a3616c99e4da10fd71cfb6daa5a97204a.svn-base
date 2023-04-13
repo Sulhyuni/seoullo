@@ -1,0 +1,9 @@
+package com.seoullo.scheduler.service;
+
+public interface SchedulerService {
+	
+	public void tourNotNew();
+	
+	public void deleteTourFiles();
+
+}

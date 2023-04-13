@@ -1,0 +1,15 @@
+package com.seoullo.book.service;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import com.seoullo.book.mapper.BookMapper;
+import lombok.Setter;
+
+@Service
+@Qualifier("bookServiceImpl")
+public class BookServiceImpl implements BookService {
+	
+	@Setter
+	private BookMapper mapper;
+
+}

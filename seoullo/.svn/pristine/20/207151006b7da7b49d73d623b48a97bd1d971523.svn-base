@@ -1,0 +1,24 @@
+package com.seoullo.member.vo;
+
+
+import java.util.Date;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import lombok.Data;
+
+@Data
+public class MemberVO {
+	private String tel,id, pw, prePw,name,  gender, conDate, regDate, status, nickName,email,  add,memo;
+	
+	@DateTimeFormat(pattern = "yyyyMMdd")
+	private Date age; 
+	
+	private String gradeName;
+	private int gradeNo; 
+	
+	private String cardNo, cardName,payDate;
+	private int paymentNo, payMt, total;
+	
+	
+}

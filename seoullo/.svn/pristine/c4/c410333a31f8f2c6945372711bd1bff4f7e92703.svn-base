@@ -1,0 +1,114 @@
+package com.seoullo.book.controller;
+
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.seoullo.book.service.BookService;
+import com.seoullo.book.vo.BookDetailVO;
+import com.seoullo.book.vo.BookVO;
+import com.seoullo.cart.service.CartService;
+import com.seoullo.member.service.MemberService;
+import com.seoullo.member.vo.MemberVO;
+import com.seoullo.tour.service.TourService;
+import com.webjjang.util.PageObject;
+import lombok.extern.log4j.Log4j;
+
+@Controller
+@RequestMapping("/book")
+@Log4j
+public class BookController {
+	
+	private String module = "book";
+	
+	@Autowired
+	@Qualifier("bookServiceImpl")
+	private BookService service;
+	
+	@Autowired
+	@Qualifier("tourServiceImpl")
+	private TourService tourService;
+	
+	@Autowired
+	@Qualifier("memberServiceImpl")
+	private MemberService memberService;
+	
+	@Autowired
+	@Qualifier("cartServiceImpl")
+	private CartService cartService;
+	
+	@RequestMapping("/list.do")
+	public String list(PageObject pageObject, Model model) {
+		log.info("예약리스트");
+		pageObject.setPerPageNum(5);
+		model.addAttribute("list", service.list(pageObject));		
+		return module + "/list";
+	}
+	
+	@RequestMapping("/view.do")
+	public String view(long no, Model model) {
+		log.info("예약 상세보기");
+		model.addAttribute("view", service.view(no));
+		return module + "/view";
+	}
+	
+	// 투어에서 예약하기로 바로 넘어왔을 때
+	@GetMapping("/book.do")
+	public String bookForm(String cartNos, Long no, Model model, HttpSession session) {
+		log.info("예약하기 폼");
+		if(no != null ) {			
+			model.addAttribute("vo", tourService.view(no, 0));
+		} else if (cartNos != null){			
+			List<Long> list = Arrays.stream(cartNos.split(",")).map(Long::parseLong).collect(Collectors.toList());
+			model.addAttribute("list", cartService.orderList(list));
+		}
+		MemberVO vo = (MemberVO) session.getAttribute("login");
+		String id = vo.getId();
+		model.addAttribute("member", memberService.view(id));
+		return module + "/book";
+	}
+	
+	// 투어에서 넘어온 예약 처리
+	@PostMapping("/book.do")
+	public String book(BookVO vo, Long tourNo, Long peopleA, Long peopleB, Long tourPrice, String day) throws Exception {
+		log.info("예약하기 처리");
+		// bookDetail 처리
+		List<BookDetailVO> bookDetailList = new ArrayList<BookDetailVO>();
+		BookDetailVO dvo = new BookDetailVO();
+		DateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		Date date = sdf.parse(day);
+		dvo.setTourNo(tourNo);
+		dvo.setPeopleA(peopleA);
+		dvo.setPeopleB(peopleB);
+		dvo.setTourPrice(tourPrice);
+		dvo.setDay(date);
+		bookDetailList.add(dvo);
+		log.info("******** : " + vo.getPayMethod());
+		if(vo.getPayMethod().equals("신용카드")) {
+			vo.setPayStatus("결제완료");
+		} else {
+			vo.setPayStatus("결제대기");
+		}
+		vo.setBookDetailList(bookDetailList);
+		service.book(vo);
+		return "redirect:list.do";
+	}
+	
+	// 장바구니에서 넘어온 예약 처리
+}

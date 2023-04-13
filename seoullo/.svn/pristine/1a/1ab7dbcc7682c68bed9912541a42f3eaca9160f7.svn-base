@@ -1,0 +1,15 @@
+package com.seoullo.scheduler.mapper;
+
+import java.util.List;
+
+public interface SchedulerMapper {
+	
+	public void tourNotNew();
+	
+	public List<String> tourDBFiles1();
+	public List<String> tourDBFiles2();
+	public List<String> tourDBFiles3();
+	public List<String> tourDBFiles4();
+	
+
+}

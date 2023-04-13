@@ -1,0 +1,33 @@
+package com.seoullo.tour.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import com.seoullo.tour.mapper.TourMapper;
+import com.seoullo.tour.vo.TourVO;
+import com.webjjang.util.PageObject;
+
+@Service
+@Qualifier("TourServiceImpl")
+public class TourServiceImpl implements TourService {
+
+	@Autowired
+	private TourMapper mapper;
+
+	@Override
+	public List<TourVO> list(String tag, String region, String order, PageObject pageObject) {
+		String word = null;
+		if (pageObject != null)
+			word = pageObject.getWord();
+		return mapper.list(tag, region, word, order, pageObject);
+	}
+
+	@Override
+	public List<TourVO> listByGuide(String id, PageObject pageObject) {
+		return mapper.listByGuide(id, pageObject);
+	}
+
+}

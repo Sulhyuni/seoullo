@@ -1,0 +1,159 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pageNav" tagdir="/WEB-INF/tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>장바구니</title>
+<style type="text/css">
+.peopleA, .peopleB{
+	border: none;
+	text-align: center;
+	width: 20px;
+}
+input:focus{
+	outline: none;
+}
+button:focus{
+	outline: none;
+}
+a:focus{
+	outline: none;
+}
+.tourInfoDiv{
+	border-top: solid 1px #aaa;
+	border-bottom: solid 1px #aaa;
+	padding : 10px 0;
+	margin-bottom: 5px;
+}
+#addBtn{
+	color: #4B8A08;
+	font-weight: bold;
+	margin: 0 5px;
+}
+#bookBtn{
+	background: #4B8A08;
+	color: white;
+	font-weight: bold;
+	margin: 0 5px;
+}
+</style>
+<script type="text/javascript">
+$(function(){
+	
+	// 전체선택 버튼
+	$('#selectAll').click(function() {
+		$('.itemCheckbox').prop('checked', $(this).prop('checked'));
+	}); // end of selectAll
+
+	$(".plus_btnA").click(function(){
+		let peopleA = $(this).parent("div").find("input").val();
+		$(this).parent("div").find("input").val(++peopleA);
+	});
+	$(".minus_btnA").click(function(){
+		let peopleA = $(this).parent("div").find("input").val();
+		if(peopleA > 0) {
+			$(this).parent("div").find("input").val(--peopleA);
+		}
+	});
+	$(".plus_btnB").click(function(){
+		let peopleB = $(this).parent("div").find("input").val();
+		$(this).parent("div").find("input").val(++peopleB);
+	});
+	$(".minus_btnB").click(function(){
+		let peopleB = $(this).parent("div").find("input").val();
+		if(peopleB > 0) {
+			$(this).parent("div").find("input").val(--peopleB);
+		}
+	});
+		
+});
+</script>
+</head>
+<body>
+	<div class="container">
+		<div>
+			<div class="row tourInfoDiv">
+				<div class="col-md-1">
+					<span><input type="checkbox" id="selectAll"></span>
+				</div>
+				<div class="col-md-11" align="center" style="padding: 3px 0;">
+					<span>투어상품정보</span>
+				</div>
+			</div>
+			
+			<!-- 장바구니 없을 때 -->
+			<c:if test="${empty list }">
+				<div align="center" style="margin: 100px 0;">
+					<h1 style="color: #4B8A08">장바구니에 담긴 상품이 없습니다.</h1>
+					<span style="color: #gray; font-size:15px;">담기를 원하시면 아래 <span style="font-size:15px; font-weight: bold;">투어예약하기</span> 버튼을 눌러주세요.</span>
+					<br/><br/><br/>
+					<a href="/tour/list.do"><button class="btn btn-default btn-lg">투어 담으러 가기</button></a>
+				</div>
+			</c:if>			
+		
+			<!-- 장바구니 한칸 -->	
+			<c:forEach items="${list }" var="vo">
+				<div class="row" style="padding:10px 0;">			
+					<div class="col-md-1">
+						<input type="checkbox" class="itemCheckbox" value="${vo.cartNo}">
+					</div>
+					
+					<div class="col-md-2">
+						<img src="${vo.thumbnail }" class="img"
+								alt="${vo.thumbnail }" width="50px;" height="50px;">
+					</div>
+					
+					<div class="col-md-2">
+						<span>[ ${vo.type } ] </span> <br/>
+						<span>[ ${vo.title } ]</span> <br/>
+						<span>[ ${vo.region } ]</span> <br/>
+					</div>
+					
+					<div class="col-md-2">
+						<br/>
+						<span style="color:#d8421c; font-weight: bold;"><fmt:formatDate pattern="yyyy-MM-dd" value="${vo.day }"/></span><br/>
+					</div>
+					
+					<div class="col-md-2">
+						<div>
+						 	대인
+							<button class="btn btn-default btn-xs minus_btnA">－</button>							
+							<input type="text" class="peopleA" name="peopleA" readonly="readonly" value="${vo.peopleA }">
+							<button class="btn btn-default btn-xs plus_btnA">＋</button>
+						</div>
+						<div>
+							소인
+							<button class="btn btn-default btn-xs minus_btnB">－</button>							
+							<input type="text" class="peopleB" name="peopleB" readonly="readonly" value="${vo.peopleB }">
+							<button class="btn btn-default btn-xs plus_btnB">＋</button>
+						</div>
+					</div>
+					
+					<div class="col-md-3" align="right">
+						<button class="btn btn-default btn-sm">변경</button>
+						<button class="btn btn-default btn-sm">예약</button>
+						<button class="btn btn-default btn-sm">삭제</button>
+					</div>
+					
+				</div>
+				<hr style="margin: 5px 0">
+			</c:forEach>
+		</div>
+		
+		<c:if test="${!empty list }">
+			<div>
+				<button class="btn btn-default btn-sm">선택삭제</button>
+			</div>
+			<div style="text-align: center; margin: 30px 0 0 0">
+				<a href="/tour/list.do"><button id="addBtn" class="btn btn-default btn-lg">투어 더 담기</button></a>
+				<button id="bookBtn" class="btn btn-default btn-lg">예약하기</button>
+			</div>
+		</c:if>
+		
+	</div>
+</body>
+</html>

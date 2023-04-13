@@ -1,0 +1,71 @@
+package com.seoullo.member.controller;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.seoullo.member.service.MemberService;
+import com.seoullo.member.vo.MemberVO;
+
+import lombok.extern.log4j.Log4j;
+
+@Controller
+@RequestMapping("/member")
+@Log4j
+public class MemberController {
+
+	@Autowired
+	@Qualifier("memberServiceImpl")
+	private MemberService service;
+	String mem = "member";
+
+	// 로그인(memberVO)
+	@GetMapping("/login.do")
+	public String loginForm() {
+
+		log.info("로그인 폼------------------------");
+
+		return mem + "/login";
+	}
+
+	// 로그인 처리
+	@PostMapping("/login.do")
+	public String login(String id, String pw, HttpSession session) {
+		log.info("로그인 처리...........");
+		log.info("id=" + id + ",pw=" + pw);
+		
+		MemberVO vo = new MemberVO();
+		vo.setId(id);
+		vo.setPw(pw);
+		session.setAttribute("login", service.login(vo));
+
+		// 메인으로
+		return "redirect:/";
+
+	}
+
+	// 로그아웃 처리
+	@GetMapping("/logout.do")
+	public String logout(HttpSession session, RedirectAttributes rttr) {
+
+		session.removeAttribute("login");
+
+		//메인으로
+		return "redirect:/";
+	}
+
+	// 운영자의 리스트(MemberVO)
+
+	// 운영자, 가이드, 일반회원의 상세보기 (MemberVO, paynentVO)
+
+	// 정보수정(MemberVO)
+
+	// 상태처리
+
+}

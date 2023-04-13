@@ -1,0 +1,53 @@
+package com.seoullo.tour.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import com.seoullo.tour.mapper.TourMapper;
+import com.seoullo.tour.vo.TourVO;
+import com.webjjang.util.PageObject;
+
+@Service
+@Qualifier("TourServiceImpl")
+public class TourServiceImpl implements TourService {
+
+	@Autowired
+	private TourMapper mapper;
+
+	@Override
+	public List<TourVO> list(String tag, String region, String order, PageObject pageObject) {
+		String word = null;
+		if (pageObject != null)
+			word = pageObject.getWord();
+		List<TourVO> list = mapper.list(tag, region, word, order, pageObject);
+		for (TourVO vo : list) {
+			vo.setTagList(mapper.taglist(vo.getNo()));
+		}
+		return list;
+	}
+
+	@Override
+	public List<TourVO> listByGuide(String id, PageObject pageObject) {
+		
+		String word = null;
+		List<TourVO> list = mapper.listByGuide(id, pageObject);
+		for (TourVO vo : list) {
+			vo.setTagList(mapper.taglist(vo.getNo()));
+		}
+		return list;
+	}
+
+	@Override
+	public TourVO view(Long no) {
+		TourVO vo = mapper.view(no);
+		vo.setTourdateList(mapper.viewTourdate(no));
+		vo.setScheduleList(mapper.viewSchedule(no));
+		vo.setTourpointList(mapper.viewTourpoint(no));
+		vo.setCheckpointList(mapper.viewCheckpoint(no));
+		return vo;
+	}
+
+}

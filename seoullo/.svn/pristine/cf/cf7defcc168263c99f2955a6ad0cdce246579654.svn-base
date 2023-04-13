@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seoullo.anonymous.mapper.AnonyReplyMapper">
+<!-- /seoullo/src/main/java/com/seoullo/anonymous/mapper/AnonyReplyMapper.java -->
+
+<select id="list" resultType="com.seoullo.anonymous.vo.AnonyReplyVO">
+select rno, reply, id, writer, writeDate
+	from(
+	    select rownum rnum,rno, reply, id, writer, writeDate
+	    from (
+	        select rno, reply, id, writer, writeDate
+	        from anony_reply
+	        where anonyNo = #{anonyNo}
+	        order by rno desc
+	    )
+	)
+	<!-- map - no + pageObject -->
+	where rnum between #{pageObject.startRow} and  #{pageObject.endRow}
+</select>
+
+<select id="getTotalRow" resultType="Long">
+	select count(*)
+	from anony_reply
+	where anonyNo = #{anonyNo}
+</select>
+
+<select id="replyCnt">
+	select count(*) from anony_reply where anonyNo =#{anonyNo};	
+</select>
+
+<insert id="write">
+	insert into anony_reply (rno, anonyno, reply, id)
+	values(anony_reply_seq.nextval, #{anonyNo}, #{reply}, #{id})
+</insert>
+
+<update id="update">
+	update anony_reply set reply=#{reply}
+	where rno = #{rno}
+</update>	
+
+<delete id="delete">
+	delete from anony_reply
+	where rno = #{rno}
+</delete>
+
+
+</mapper>

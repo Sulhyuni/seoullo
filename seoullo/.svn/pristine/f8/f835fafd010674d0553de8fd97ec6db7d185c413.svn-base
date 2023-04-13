@@ -1,0 +1,102 @@
+package com.seoullo.book.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import com.seoullo.book.mapper.BookMapper;
+import com.seoullo.book.vo.BookDetailVO;
+import com.seoullo.book.vo.BookVO;
+import com.seoullo.book.vo.GuideVO;
+import com.webjjang.util.PageObject;
+
+import lombok.Setter;
+
+@Service
+@Qualifier("bookServiceImpl")
+public class BookServiceImpl implements BookService {
+	
+	@Setter(onMethod_ = @Autowired)
+	private BookMapper mapper;
+
+	@Override
+	public List<BookVO> list(PageObject pageObject) {
+		pageObject.setTotalRow(mapper.getTotalRow(pageObject));
+		List<BookVO> list = mapper.list(pageObject);
+		for (BookVO vo : list) {
+			vo.setBookDetailList(mapper.viewDetail(vo.getNo()));
+		}
+		return list;
+	}
+
+	@Override
+	public List<BookVO> perList(PageObject pageObject, String id) {
+		pageObject.setTotalRow(mapper.getTotalRow(pageObject));
+		List<BookVO> list = mapper.perList(pageObject, id);
+		for (BookVO vo : list) {
+			vo.setBookDetailList(mapper.viewDetail(vo.getNo()));
+		}
+		return list;
+	}
+
+	@Override
+	public List<GuideVO> guideList(long tourNo) {
+		List<GuideVO> list = mapper.guideList(tourNo);
+		for (GuideVO vo : list) {
+			vo.setGuideDetailList(mapper.guideDetailList(vo.getDay(), tourNo));
+		}
+		return list;
+	}
+	
+	@Override
+	public BookVO view(long no) {
+		BookVO vo = mapper.view(no);
+		vo.setBookDetailList(mapper.viewDetail(no));
+		return vo;
+	}
+
+	@Override
+	public int book(BookVO vo) {
+		mapper.book(vo);
+		long no = mapper.findBookNo(vo.getId());
+		for (BookDetailVO o : vo.getBookDetailList()) {
+			o.setBookNo(no);
+			int result = mapper.bookDetail(o);
+			if(result == 1) {				
+				mapper.incReserveNum(o);
+			}
+			BookDetailVO dvo = mapper.checkReserveNum(o);
+			System.out.println(dvo.getDay());
+			System.out.println(dvo.getTourNo());
+			System.out.println(dvo.getReserveNum());
+			System.out.println(dvo.getMaxNum());			
+			if(dvo.getReserveNum() == dvo.getMaxNum()) {
+				dvo.setStatus("마감");
+				mapper.reserveStatusUpdate(dvo);
+				mapper.tourStatusUpdateWhenBooking(dvo.getTourNo());
+			}
+		}
+		return 1;
+	}
+
+	@Override
+	public int cancel(BookDetailVO vo) {
+	    Integer result = mapper.cancel(vo.getNo());
+	    if(result != null) {
+	    	mapper.decReserveNum(vo);
+	    	BookDetailVO dvo = mapper.checkReserveNum(vo);
+	    	dvo.setStatus("예약가능");
+	    	mapper.reserveStatusUpdate(dvo);
+	    	mapper.tourStatusUpdateWhenCancel(dvo.getTourNo());
+	    }
+	    return result;
+	}
+
+	@Override
+	public int tourComplete(long no) {
+		mapper.deleteReview(no); 
+	    return 1;
+	}
+}

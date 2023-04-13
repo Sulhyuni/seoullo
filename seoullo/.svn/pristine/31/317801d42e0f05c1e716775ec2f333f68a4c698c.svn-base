@@ -1,0 +1,15 @@
+package com.seoullo.cart.service;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import com.seoullo.cart.mapper.CartMapper;
+import lombok.Setter;
+
+@Service
+@Qualifier("cartServiceImpl")
+public class CartServiceImpl implements CartService {
+	
+	@Setter
+	private CartMapper mapper;
+
+}

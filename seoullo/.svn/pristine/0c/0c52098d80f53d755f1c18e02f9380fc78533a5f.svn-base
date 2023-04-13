@@ -1,0 +1,8 @@
+package com.seoullo.event.vo;
+
+public class ApplyEventVO {
+	
+	private long fileno,e_no,main;
+	private String filename;
+
+}

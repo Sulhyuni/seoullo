@@ -1,0 +1,224 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seoullo.tour.mapper.TourMapper">
+
+	<!-- 리스트 기본 쿼리 : 검색조건에 맞게 sql 조립 -->
+	<select id="list" resultType="com.seoullo.tour.vo.TourVO">
+		<include refid="basic" />
+		<include refid="region" />
+		<include refid="closed" />
+		ORDER BY gradeNo desc, regDate desc
+	</select>
+
+	<sql id="basic">
+		<if test="tag == null || tag == ''">
+			SELECT t.no, t.hit, t.status, t.type, t.regdate, t.title, t.description, t.thumbnail, m.gradeNo
+			FROM
+			tour t, member m WHERE
+			t.status <![CDATA[<>]]>
+			'모집종료' AND t.guideId = m.id
+			<if test="title != null || title == ''">
+				AND t.title LIKE '%'||#{title}||'%'
+			</if>
+		</if>
+		<if test="tag != null">
+			<if test="tag != ''">
+				SELECT t.no, t.hit, t.status,
+				t.type, t.regdate, t.title,
+				t.description,
+				t.thumbnail, m.gradeNo
+				FROM tour t, tag tg, member m
+				WHERE t.status <![CDATA[<>]]>
+				'모집종료' AND t.no = tg.tourNO AND t.guideId = m.id AND tg.tag LIKE
+				'%'||#{tag}||'%'
+			</if>
+		</if>
+	</sql>
+
+	<sql id="closed">
+		<if test="closed == 0">
+			AND t.status <![CDATA[<>]]>
+			'마감'
+		</if>
+	</sql>
+
+	<sql id="region">
+		<if test="region != null || region == ''">
+			<if test="region == '도심권'">
+				AND (region = '종로구' OR region = '중구' OR region = '용산구')
+			</if>
+			<if test="region == '서북권'">
+				AND (region = '은평구' OR region = '서대문구' OR region =
+				'마포구')
+			</if>
+			<if test="region == '동북권'">
+				AND (region = '성동구' OR region = '광진구' OR region = '동대문구'
+				OR region = '중랑구' OR region = '성북구' OR region = '강북구' OR region =
+				'도봉구' OR region = '노원구')
+			</if>
+			<if test="region == '서남권'">
+				AND (region = '강서구' OR region = '양천구' OR region = '영등포구'
+				OR region = '구로구' OR region = '금천구' OR region = '관악구' OR region =
+				'동작구')
+			</if>
+			<if test="region == '동남권'">
+				AND (region = '서초구' OR region = '강남구' OR region = '송파구'
+				OR region = '강동구')
+			</if>
+		</if>
+	</sql>
+
+	<!-- 가이드의 본인 투어 리스트 -->
+	<select id="listByGuide" resultType="com.seoullo.tour.vo.TourVO">
+		SELECT no, hit, regdate,
+		status, type,
+		title, description, thumbnail FROM tour WHERE
+		guideId =
+		#{id}
+	</select>
+
+	<!-- 리스트에서 함께 불러올 태그리스트 -->
+	<select id="taglist" resultType="String">
+		SELECT tag FROM tag WHERE tourNo
+		= #{tourNo}
+	</select>
+
+	<!-- 투어 보기 관련 쿼리 : tour, tourdate, schedule, tourpoint, checkpoint 순 -->
+	<select id="view" resultType="com.seoullo.tour.vo.TourVO">
+		SELECT no, status, type, title,
+		description, guideId,
+		region, mainImg, subImg, subtitle, content,
+		meetLat, meetLng,
+		meetPlace
+		FROM tour WHERE no = #{no}
+	</select>
+
+	<select id="viewTourdate"
+		resultType="com.seoullo.tour.vo.TourdateVO">
+		SELECT day, status, maxNum, reserveNum, priceA, priceB FROM
+		tourdate WHERE tourNo = #{no}
+	</select>
+
+	<select id="viewSchedule"
+		resultType="com.seoullo.tour.vo.ScheduleVO">
+		SELECT dayNum, scheduleNum, starthour, startminute,
+		schedule,
+		description FROM schedule WHERE tourNo = #{no}
+		ORDER BY
+		dayNum,
+		scheduleNum
+	</select>
+
+	<select id="viewTourpoint"
+		resultType="com.seoullo.tour.vo.TourpointVO">
+		SELECT image, title, content FROM tourpoint WHERE tourNo =
+		#{no} ORDER BY no
+	</select>
+
+	<select id="viewCheckpoint" resultType="String">
+		SELECT content FROM
+		checkpoint WHERE tourNo = #{no} ORDER BY no
+	</select>
+
+	<!-- 조회수 증가 -->
+	<update id="increaseHit">
+		UPDATE tour SET hit = hit + 1 WHERE no = #{no}
+	</update>
+
+	<!-- 투어 등록 관련 쿼리 -->
+	<!-- tour, tourdate, schedule, tourpoint, tag, checkpoint 순 -->
+	<insert id="write">
+		<selectKey resultType="Long" keyProperty="no" order="BEFORE">
+			SELECT
+			tour_seq.NEXTVAL FROM dual
+		</selectKey>
+		INSERT INTO tour (no, type, title, description,
+		region, guideId,
+		thumbnail, mainImg, subImg, subtitle, content, meetPlace, meetLat,
+		meetLng)
+		VALUES
+		(#{no}, #{type},
+		#{title}, #{description}, #{region},
+		#{guideId}, #{thumbnail},
+		#{mainImg}, #{subImg}, #{subtitle},
+		#{content}, #{meetPlace}, #{meetLat, jdbcType=DOUBLE}, #{meetLng,
+		jdbcType=DOUBLE})
+	</insert>
+
+	<insert id="writeTourdate">
+		INSERT INTO tourdate (tourNo, day, maxNum, priceA,
+		priceB)
+		VALUES (#{tourNo}, #{day}, #{maxNum}, #{priceA}, #{priceB})
+	</insert>
+
+	<insert id="writeSchedule">
+		INSERT INTO schedule
+		VALUES (schedule_seq.NEXTVAL,
+		#{tourNo},
+		#{dayNum}, #{scheduleNum},
+		#{starthour, jdbcType=INTEGER},
+		#{startminute, jdbcType=INTEGER}, #{schedule},
+		#{description})
+	</insert>
+
+	<insert id="writeTourpoint">
+		INSERT INTO tourpoint
+		VALUES (tourpoint_seq.NEXTVAL,
+		#{tourNo},
+		#{image}, #{title}, #{content})
+	</insert>
+
+	<insert id="writeTag">
+		INSERT INTO tag
+		VALUES (#{tourNo}, #{tag})
+	</insert>
+
+	<insert id="writeCheckpoint">
+		INSERT INTO checkpoint
+		VALUES (checkpoint_seq.NEXTVAL,
+		#{tourNo},
+		#{checkpoint})
+	</insert>
+
+	<!-- 투어 수정 : 투어일반, 일반이미지는 수정 / 스케줄, 투어포인트, 태그, 체크포인트는 삭제 후 write 이용 -->
+	<update id="updateTour">
+		UPDATE tour SET description = #{description},
+		subtitle=#{subtitle}, content= #{content}, meetPlace = #{meetPlace},
+		meetLat = #{meetLat}, meetLng = #{meetLng}
+		WHERE no = #{no}
+	</update>
+	<update id="updateImage">
+		UPDATE tour SET thumbnail = #{thumbnail}, mainImg =
+		#{mainImg}, subImg = #{subImg} WHERE no = #{no}
+	</update>
+
+	<delete id="deleteSchedule">
+		DELETE FROM schedule WHERE tourNo = #{tourNo}
+	</delete>
+	<delete id="deleteTourpoint">
+		DELETE FROM tourpoint WHERE tourNo = #{tourNo}
+	</delete>
+	<delete id="deleteTag">
+		DELETE FROM tag WHERE tourNo = #{tourNo}
+	</delete>
+	<delete id="deleteCheckpoint">
+		DELETE FROM checkpoint WHERE tourNo = #{tourNo}
+	</delete>
+
+	<!-- 모집종료 -->
+	<update id="close">
+		UPDATE tour SET status = '모집종료' WHERE no = #{no}
+	</update>
+
+	<!-- 쓰레드: 3일 후 신규를 예약가능으로 전환 -->
+	<update id="afterNew">
+		UPDATE tour SET status = '예약가능' WHERE status = '신규' AND regdate <![CDATA[<]]>
+		sysdate - 3
+	</update>
+
+
+
+</mapper>

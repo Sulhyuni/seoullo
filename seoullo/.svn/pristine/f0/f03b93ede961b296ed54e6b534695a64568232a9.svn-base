@@ -1,0 +1,127 @@
+package com.seoullo.member.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import com.seoullo.member.mapper.MemberMapper;
+import com.seoullo.member.vo.MemberVO;
+import com.webjjang.util.PageObject;
+
+import lombok.Setter;
+
+
+
+@Service
+@Qualifier("memberServiceImpl")
+public class MemberServiceImpl implements MemberService {
+
+	
+	@Setter(onMethod_= @Autowired)
+	private MemberMapper mapper;
+	
+	
+	@Override
+	public MemberVO login(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.login(vo);
+	}
+
+
+	@Override
+	public String findId(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.findId(vo);
+	}
+
+	@Override
+	public String findPw(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.findPw(vo);
+	}
+
+	//mapper.prePw(임시비밀번호) 넣기.
+	@Override
+	public int updatePw(MemberVO vo) {
+		mapper.prePw(vo);
+		return mapper.updatePw(vo);
+	}
+	
+	//회원이 비밀번호 변경하
+	//그냥 비밀번호를 변경하려면??? - 생각해보기
+	@Override
+	public int updatePw2(MemberVO vo) {
+		
+		return mapper.updatePw(vo);
+	}
+
+	@Override
+	public List<MemberVO> list(PageObject pageObject) {
+		pageObject.setTotalRow(mapper.getTotalRow(pageObject));
+		return mapper.list(pageObject);
+	}
+
+
+	@Override
+	public MemberVO view(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.view(vo);
+	}
+
+
+	@Override
+	public int updateMember(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.updateMember(vo);
+	}
+
+	@Override
+	public List<MemberVO> guideList(PageObject pageObject) {
+		pageObject.setTotalRow(mapper.getTotalRow(pageObject));
+		return mapper.guideList(pageObject);
+	}
+
+	@Override
+	public int welcom(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.welcom(vo);
+	}
+
+	//mapper.guidePay와 mapper.gWelcom 두개 넣기. 그래서 두개의 쿼리를 같이 쓴다.
+	//welcom먼저 넣기
+	@Override
+	public int gWelcom(MemberVO vo) {
+		mapper.guidePay(vo);
+		return mapper.gWelcom(vo);
+	}
+
+	@Override
+	public String checkId(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.checkId(vo);
+	}
+
+	@Override
+	public String checkNickName(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.checkNickName(vo);
+	}
+
+	@Override
+	public int delete(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.delete(vo);
+	}
+
+
+	@Override
+	public int updateAdmin(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.updateAdmin(vo);
+	}
+
+
+
+}

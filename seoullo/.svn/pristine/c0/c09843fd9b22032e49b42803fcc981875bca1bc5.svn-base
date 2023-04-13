@@ -1,0 +1,29 @@
+package com.seoullo.tour.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.seoullo.tour.service.TourService;
+import com.webjjang.util.PageObject;
+
+import lombok.extern.log4j.Log4j;
+
+@Controller
+@RequestMapping("/tour")
+@Log4j
+public class TourController {
+	
+	@Autowired
+	@Qualifier("TourServiceImpl")
+	private TourService service;
+	
+	@RequestMapping("/list.do")
+	public String list(PageObject pageObject, Model model) {
+		model.addAttribute("list", service.list("인사동", null, null, null));
+		return "tour/list";
+	}
+
+}

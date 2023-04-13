@@ -1,0 +1,103 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+/* 패스워드가 동일하면 */
+.pw_input_re_1 {
+	color: green;
+	display: none;
+}
+/* 패스워드가 동일하지 않으면 */
+.pw_input_re_2 {
+	color: red;
+	display: none;
+}
+
+
+</style>
+
+<script type="text/javascript">
+
+$(function(){
+// 	$("#updatePwForm").submit(function(){
+// 	});
+	
+	$("#cancelBtn").click(function(){
+		history.back();
+	});
+	
+	$("#delete").submit(function(){
+		// 비밀번호와 비밀번호 확인 같은지 체크
+		if($("#Pw").val() != $("#Pw2").val()){
+			alert("비밀번호가 일치하지 않습니다.");
+			$("#pw1, #Pw2").val("");
+			$("#Pw").focus();
+			return false;
+		}
+		
+	});
+	$(function() {
+		$('#pw').on(
+				"propertychange change keyup paste input",
+				function() {
+					//console.log("keyup 테스트");
+					//여기부터 ajax
+					var pw = $('#pw').val();
+					var data = {
+						pw : pw}	
+
+$.ajax({
+					type : "post",
+					url : "/member/checkPW",
+					data : data,
+					success : function(result) {
+						//console.log("성공여부:" + result);
+							if (result != 'fail') {
+							$('.pw_input_re_1').css("display","inline-block");
+								$('.pw_input_re_2').css("display", "none");
+							} else {
+								$('.pw_input_re_2').css("display",
+										"inline-block");
+								$('.pw_input_re_1').css("display", "none");
+							}//end if& else
+						}//end sucess 
+
+					}); //end ajax
+
+				});
+
+	
+	
+});
+
+</script>
+</head>
+<body>
+<div class="container">
+	<h1>회원탈퇴</h1>
+	
+	<form action="delete.do" method="post" id="delete">
+		<div class="form-group">
+				<label for="pw">현재 비밀번호</label>
+				<input type="password" class="form-control" id="pw" name="pw">
+				<span class="pw_input_re_1">알맞게 입력하였습니다.</span>
+				 <span class="pw_input_re_2">잘못 입력하였습니다.</span>
+		</div>
+	
+		<div class="form-group">
+				<label for="pw2">비밀번호 확인</label>
+				<input type="password" class="form-control" id="Pw2">
+		</div>
+		
+		<button type="submit" id="deleteBtn"class="btn">확인</button>
+		<button type="button" id="cancelBtn" class="btn">취소</button>
+	</form>
+	
+
+</div>
+</body>
+</html>

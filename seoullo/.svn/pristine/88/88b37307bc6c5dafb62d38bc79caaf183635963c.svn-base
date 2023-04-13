@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seoullo.qna.mapper.QnaMapper">
+
+
+<!-- list -->
+<select id="list" resultType="com.seoullo.qna.vo.QnaVO">
+
+select tourNo, region, qnaNo, title, id, status,hit, writeDate, refNo, ordNo, levNo,parentNo
+from(
+    select rownum rnum, tourNo,region, qnaNo, title, id, status,hit, writeDate,refNo, ordNo, levNo, parentNo
+    from(
+        select q.tourNo,t.region, q.qnaNo, q.title, m.id, q.status,q.hit, q.writeDate, q.refNo, q.ordNo, q.levNo,q.parentNo
+            from qna q, tour t, member m
+            where (q.tourNo = t.no) and (q.id=m.id)
+            	<include refid="search" />
+            order by refNo desc, ordNo asc
+        )
+     ) 
+      where rnum between #{startRow} and #{endRow}
+</select>
+
+<!-- pageObject -->
+<select id="getTotalRow" resultType="Long">
+	select count(*)
+	from qna
+		<include refid="search"></include>
+</select>
+<!-- 검색 -->
+<sql id="search">
+		<if test="word !=null and word !=''.toString()">
+			where 1 = 0
+			<if test="key.indexOf('t'.toString()) >= 0">
+				or title like '%' || #{word} || '%'
+			</if>
+			<if test="key.indexOf('c'.toString()) >= 0">
+				or content like '%' || #{word} || '%'
+			</if>
+			<if test="key.indexOf('w'.toString()) >= 0">
+				or region like '%' || #{word} || '%'
+			</if>
+		</if>
+</sql>
+
+
+
+
+<!-- view -->
+<select id="view" resultType="com.seoullo.qna.vo.QnaVO">
+	select q.qnaNo, m.id, q.title, q.content, q.writeDate,  q.tourNo, t.region,q.status, q.hit,q.refNo, q.ordNo, q.levNo, q.parentNo
+	from qna q, tour t, member m
+	where (q.qnaNo =#{qnaNo}) and (q.tourNo=t.no)and(q.id=m.id)
+	order by q.ordNo asc
+</select>
+
+<!-- increase -->
+<update id="increase">
+	update qna set hit = hit + 1
+	where qnaNo = #{qnaNo}
+</update>
+
+
+<!-- 질문 -->
+<!-- write -->
+<insert id="write">
+<!-- parentNo, tourNo  하드코딩중 -->
+<!-- 투어상품에서 qna 작성-> 글쓰기 폼으로 넘어갈때 tourVO(no,region) 넘어가게 한다. 작성할때엔 지역 작성 불필요! -->
+<!-- id 는 controller에서 session에 담아 출력함. -->
+	insert into qna (qnaNo, title, content, id, refNo, ordNo, levNo, parentNo, tourNo)
+values(qna_seq.nextval, #{title},#{content},#{id}, qna_seq.nextval, qna_seq.nextval, 0, 1, 1 )
+</insert>
+
+
+
+ <!-- answer --> 
+<!-- <update id="answer"> -->
+<!-- 	update qna set ordNo = ordNo + 1 -->
+<!-- 	where refNo =${refNo} and ordNo >=${ordNo}  -->
+<!-- </update> -->
+<!-- <insert id="answer"> -->
+<!-- 	insert into qna(qnaNo, title, content, id, refNo, ordNo, levNo, parentNo) -->
+<!-- 	values(qna_seq.nextval,#{title}, ${content}, ${id}, ${refNo}, ${ordNo}, 1, ${parentNo}) -->
+<!-- </insert> -->
+
+<!-- ordNo 도 +1 되어야 한다. -->
+
+
+<!-- update -->
+<update id="update">
+	update qna set title=#{title}, content=#{content}
+	where qnaNo = #{qnaNo}
+</update>
+
+
+<!-- delete -->
+<delete id="delete" >
+	delete from qna where qnaNo=#{qnaNo}
+</delete>
+
+
+
+</mapper>

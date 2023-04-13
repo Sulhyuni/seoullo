@@ -1,0 +1,171 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pageNav" tagdir="/WEB-INF/tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>정보수정 페이지</title>
+<style type="text/css">
+
+/* 닉네임이 중복이 아니면 */
+.nick_input_re_1 {
+	color: green;
+	display: none;
+}
+/* 닉네임이 중복이면 */
+.nick_input_re_2 {
+	color: red;
+	display: none;
+}
+
+.getOut {
+	color: red;
+}
+.e_mail:invalid {
+  border: 3px solid red;
+}
+</style>
+<script type="text/javascript">
+	$(function() {
+		//닉네임 중복검사 propertychange change keyup paste input-이게 들어가야함..
+		$('#nickName').on(
+				"propertychange change keyup paste input",
+				function() {
+					//console.log("keyup 테스트");
+					//여기부터 ajax
+					var nickName = $('#nickName').val();
+					var data = {
+						nickName : nickName}	
+
+$.ajax({
+						type : "post",
+						url : "/member/checkNickName",
+						data : data,
+						success : function(result) {
+							//console.log("성공여부:" + result);
+							if (result != 'fail') {
+								$('.nick_input_re_1').css("display",
+										"inline-block");
+								$('.nick_input_re_2').css("display", "none");
+							} else {
+								$('.nick_input_re_2').css("display",
+										"inline-block");
+								$('.nick_input_re_1').css("display", "none");
+							}//end if& else
+						}//end sucess 
+
+					}); //end ajax
+
+				});
+
+		//취소하는 것.. 뷰로 돌아가기
+		$("#cancelBtn").click(function() {
+			history.back();
+		});
+
+
+		$('#updateBtn').click(function() {
+			var tel = $("#tel").val();
+			if (tel.length > 14) {
+				alert("입력하신 연락처를 다시한번 더 확인해 주세요.");
+				return false;
+			}
+		});
+		//입력 글자수 제한.
+		$(document).ready(function() {
+			$('#nickName').on('keyup', function() {
+				$('#nick_max_cnt').html("(" + $(this).val().length + "/10)");
+				if ($(this).val().length > 10) {
+					$(this).val($(this).val().substring(0, 10));
+					$('#nick_max_cnt').html("(10/10)")
+				}//end if	
+			});//end on
+		});// end ready
+
+		
+	});
+</script>
+</head>
+<body>
+	<div class="container">
+
+		<!-- varchar2 닉네임(30byte)로 지정 한글 하나당 3byte, 아이디는 25byte 영어는 알파벳당 1byte씩 이멜은 50byte를 설정함.-->
+		<!-- 이 페이지에서 수정할부분 - 이메일주소, 연락처, 닉네임(아작스),운영자의 상태변경(select로 하기)  -->
+		<form action="update.do" method="post" >
+			<!-- 넘어오는 정보 -->
+				<input type="hidden" name="status" value="${vo.status}">
+			
+			<!-- 있어야 하는 것  아이디, 이름, 닉네임, 연락처,이메일, 회원등급명, 회원의 상태(셀렉바로) -->
+			<div
+				style="border: 1px solid #009900; border-radius: 20px; padding: 20px; margin: 20px 25px;">
+				<h1>회원정보 수정</h1>
+				<hr />
+				<div class="form-group">
+					<label>회원 이름</label>
+					<input name="name" id="name" class="form-control"
+							value="${vo.name }" readonly>
+				</div>
+
+				<div class="form-group">
+					<label>아이디</label>
+					
+						<input name="id" id="id" class="form-control" value="${vo.id }"
+							readonly>
+				</div>
+
+				<div class="form-group">
+						<label>닉네임</label><!-- 특수문자는 입력이 안돼게 해놓음 -->
+						<input name="nickName" id="nickName" class="form-control" placeholder="한글과 영문 숫자만 입력해주세요"
+							value="${view.nickName }" pattern="[ㄱ-ㅎㅏ-ㅣ가-힣A-Za-z0-9]+">
+						<p id="nick_max_cnt" style="float: right;">(/10)</p>
+				</div>
+				<span class="nick_input_re_1">사용가능한 닉네임 입니다.</span> <span
+					class="nick_input_re_2">이미 존재하는 닉네임 입니다.</span>
+				<div class="form-group">
+					<label>연락처</label>
+		
+						<input name="tel" id="tel" class="form-control"
+							value="${view.tel }" placeholder="-를 제외하고 입력해주세요.">
+				</div>
+
+				<div style="display: flex; flex-wrap: wrap;">
+					<div class="form-group" style="width: 50%;">
+						<label>이메일</label> <!-- 영어와 숫자가 입력되게 패턴을 정함. -->
+					
+							<input name="e_mail" id="e_mail" class="form-control"
+								value="${view.e_mail }" pattern="[A-Za-z0-9]+"
+								placeholder="이메일 주소는 사용되는 것으로 입력을 하셔야합니다.">
+					</div>
+					<div class="form-group" style="width: 50%;">
+						<label for="e_mail">이메일 주소를 선택해주세요</label>
+						<select class="form-control" id="add" name="add">
+							<option value="@naver.com">@naver.com</option>
+							<option value="@daum.net">@daum.net</option>
+							
+						</select>
+					</div>
+				</div>
+
+				<div class="form-group">
+					<label>회원의 등급</label> <input name="gradeName" id="gradeName"
+						class="form-control" value="${vo.gradeName }" readonly>
+				</div>
+
+			
+			<div style="float: right;">
+				<button id="updateBtn">수정</button>
+				<button id="cancleBtn">취소</button>
+			</div>
+			<br />
+	</div>
+
+
+
+
+	</form>
+	</div>
+</body>
+</html>

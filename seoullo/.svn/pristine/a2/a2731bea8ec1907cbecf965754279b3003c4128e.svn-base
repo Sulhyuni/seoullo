@@ -1,0 +1,130 @@
+package com.seoullo.review.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import com.seoullo.book.mapper.BookMapper;
+import com.seoullo.review.mapper.ReviewMapper;
+import com.seoullo.review.vo.ReviewVO;
+import com.webjjang.util.PageObject;
+
+import lombok.Setter;
+
+@Service
+@Qualifier("reviewServiceImpl")
+public class ReviewServiceImpl implements ReviewService {
+
+	@Setter(onMethod_ = @Autowired)
+	private ReviewMapper mapper;
+
+	@Setter(onMethod_ = @Autowired)
+	private BookMapper bookMapper;
+
+	@Override
+	public List<ReviewVO> list(PageObject pageObject) {
+		// TODO Auto-generated method stub
+		pageObject.setTotalRow(mapper.getTotalRow(pageObject));
+		return mapper.list(pageObject);
+	}
+
+	// 탭 내 리스트
+	@Override
+	public List<ReviewVO> listTab(PageObject pageObject, long tourNo) {
+		// TODO Auto-generated method stub
+		pageObject.setTotalRow(mapper.getTotalRow(pageObject));
+		return mapper.listTab(pageObject, tourNo);
+	}
+
+	@Override
+	public ReviewVO view(long revNo, int inc) {
+		// TODO Auto-generated method stub
+		if (inc == 1)
+			mapper.increase(revNo);
+		return mapper.view(revNo);
+	}
+
+	@Override
+	public int writeReview(ReviewVO vo) {
+		// TODO Auto-generated method stub
+		Integer result = mapper.writeReview(vo);
+		if (result == 1) {
+			bookMapper.updateReview(vo.getBookNo());
+		}
+		return result;
+	}
+
+	@Override
+	public int writeAnswer(ReviewVO vo) {
+		// TODO Auto-generated method stub
+		vo.setOrdNo(vo.getOrdNo() + 1);
+		mapper.increaseOrdNo(vo);
+		return mapper.writeAnswer(vo);
+	}
+
+	@Override
+	public int update(ReviewVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.update(vo);
+	}
+
+	@Override
+	public int deleteReview(long refNo, long bookNo) {
+		Integer result = mapper.deleteReview(refNo);
+		if (result == 1) {
+			bookMapper.deleteReview(bookNo);
+		}
+		return result;
+	}
+
+	@Override
+	public int deleteAnswer(long revNo) {
+		// TODO Auto-generated method stub
+		return mapper.deleteAnswer(revNo);
+	}
+
+	@Override
+	public List<ReviewVO> viewImage(long no) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int writeImage(ReviewVO vo) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int updateImage(ReviewVO vo) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int updateImageThm(long imgNo, long revNo) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int deleteImage(long imgNo) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int writeLike(ReviewVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.writeLike(vo);
+	}
+
+	@Override
+	public int deleteLike(ReviewVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.deleteLike(vo);
+	}
+
+}

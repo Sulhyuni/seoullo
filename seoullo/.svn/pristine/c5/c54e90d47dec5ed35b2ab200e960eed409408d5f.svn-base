@@ -1,0 +1,64 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript">
+$(function(){
+	$("#resetBtn").click(function(){
+		$("#bookForm").find(".reset").val("");
+		$("#bookForm").find(".reset").prop('checked', false);
+		$("#bookForm").find(".reset").removeAttr('value');
+	});
+	
+	const genderVal = $('#genderVal').val();
+	if (genderVal === '여자') {
+	  $('#female').prop('checked', true);
+	} else if (genderVal === '남자') {
+	  $('#male').prop('checked', true);
+	}
+});
+</script>
+</head>
+<body>
+	<div class="container">
+		<form action="book.do" method="post" id="bookForm">
+			
+			<input id="id" name="id" type="hidden" value="${login.id }"><br/>
+			<input id="tourNo" name="tourNo" type="hidden" value="${param.no }" readonly> <br/>
+			<input id="genderVal" type="hidden" value="${member.gender }"><br/>
+			
+			<h2>투어정보</h2>
+			투어이름 : ${vo.title }<br/>
+			대인: <input id="peopleA" name="peopleA" value="${param.peopleA }" readonly> <br/>
+			소인: <input id="peopleB" name="peopleB" value="${param.peopleB }" readonly> <br/>
+			투어가격: <input id="tourPrice" name="tourPrice" value="${param.tourPrice }" readonly> <br/>
+			날짜: <input id="day" name="day" value="${param.day }"> <br/>
+			<hr/>
+			<h2>예약자정보</h2>
+			<input type="button" id="resetBtn" value="새로입력"><br/>
+			이름 : <input id="name" class="reset" name="name" value="${member.name }"><br/>
+			
+			<label for="gender">성별</label>
+			<input class="reset" type="radio" id="female" name="gender" value="여자">여자
+			<input class="reset" type="radio" id="male" name="gender" value="남자">남자
+			<br/>
+			이메일 : <input id="email" class="reset" name="email" value="${member.email }" ><br/>
+			연락처 : <input id="tel"class="reset"  name="tel" value="${member.tel }"><br/>	
+			<hr/>
+			<h2>결제수단</h2>
+			<label for="payMethod">결제방법</label>
+			<input type="radio" id="craditCard" name="payMethod" value="신용카드">신용카드
+			<input type="radio" id="'account" name="payMethod" value="무통장입금">무통장입금
+			<br/>
+			총가격 : <input id="payPrice" name="payPrice" value="${param.tourPrice }" readonly><br/>
+			<br/>
+			<button id="bookBtn" class="btn btn-default btn-xl">예약하셈</button>
+			<button id="cancelBtn" class="btn btn-default btn-xl" type="button" onclick="history.back()">취소하셈</button>
+		</form>
+		
+	</div>
+</body>
+</html>

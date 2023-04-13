@@ -1,0 +1,15 @@
+package com.seoullo.book.service;
+
+import java.util.List;
+
+import com.seoullo.book.vo.BookVO;
+import com.webjjang.util.PageObject;
+
+public interface BookService {
+
+	public List<BookVO> list(PageObject pageObject);
+	
+	public BookVO view(long no);
+	
+	public int book(BookVO vo);
+}

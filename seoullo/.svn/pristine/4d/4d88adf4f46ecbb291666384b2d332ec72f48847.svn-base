@@ -1,0 +1,5 @@
+package com.seoullo.qna.vo;
+
+public class QnaVO {
+
+}

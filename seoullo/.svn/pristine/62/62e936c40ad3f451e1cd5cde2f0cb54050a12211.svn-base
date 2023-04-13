@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seoullo.cart.mapper.CartMapper">
+
+	<select id="list" resultType="com.seoullo.cart.vo.CartVO">
+		SELECT c.no, t.thumbnail, t.title, t.region, td.day, c.peopleA, c.peopleB, c.tourPrice, t.guideId, m.id
+		FROM cart c, tour t, tourDate td, member m
+		WHERE td.tourNo = c.tourNo
+		AND td.day = c.day
+		AND t.no = td.tourNo
+		AND m.id = c.mId
+	</select>
+
+
+</mapper>

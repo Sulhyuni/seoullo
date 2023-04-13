@@ -1,0 +1,155 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pageNav" tagdir="/WEB-INF/tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Admin의 List</title>
+
+<script type="text/javascript">
+<c:if test="${!empty pageObject.word}">
+$("#key").val("${(!empty pageObject.key)?pageObject.key:'i'}");
+$("#word").val("${pageObject.word}");
+</c:if>
+	$(function() {
+
+		//한페이지에 보여줄 데이터 개수 변경 이벤트
+		$("#perPageNum").change(function() {
+			$("#changePerPageNumForm").submit();
+		});
+
+		$(document).ready(
+				function() {
+					// 클릭 이벤트 등록
+					$('.dataRow').click(
+							function() {
+								let id = $(this).find(".id").text();
+								let gradeNo = $(this).find(".gradeNo").text();
+								let page = '${param.page}';
+								let perPageNum = '${param.perPageNum}';
+								let key = '${param.key}';
+								let word = '${param.word}';
+								// if문으로 조건 검사
+								if (gradeNo == 1) {
+									//view 페이지로 이동
+									location = "view.do?id=" + id + "&page="
+											+ page + "&perPageNum="
+											+ perPageNum + "&key=" + key
+											+ "&word=" + word + "&gradeNo="
+											+ gradeNo;
+								} else {
+									// 가이드 페이지로 이동
+									location = "guideView.do?id=" + id
+											+ "&page=" + page + "&perPageNum="
+											+ perPageNum + "&key=" + key
+											+ "&word=" + word + "&gradeNo="
+											+ gradeNo;
+								}
+							});
+				});
+
+
+	});
+</script>
+<style type="text/css">
+.table:hover {
+	cursor: pointer;
+}
+.getOut {
+	color: red;
+}
+</style>
+
+</head>
+<body>
+
+	<div class="container">
+		<div>
+			<h1>회원 리스트</h1>
+		</div>
+		<div class="row">
+			<div class="col-md-3">
+				<form action="list.do" method="post">
+					<input type="hidden" name="perPageNum"
+						value="${pageObject.perPageNum }">
+					<div class="input-group mb-1">
+						<div class="input-group-prepend">
+							<select class="form-control" id="key" name="key">
+								<option value="i">아이디</option>
+							</select>
+						</div>
+						<input type="text" class="form-control" placeholder="Search"
+							id="word" name="word">
+						<div class="input-group-append">
+							<button class="btn btn-success" type="submit">검색</button>
+						</div>
+					</div>
+
+				</form>
+			</div>
+		</div>
+		<div class="col-md-2 text-right">
+			<form class="form-inline" id="changePerPageNumForm">
+				<div class="form-group">
+					<label>데이터 개수</label> <select name="perPageNum" id="perPageNum"
+						class="form-control">
+						<option>15</option>
+						<option>30</option>
+					</select>
+				</div>
+			</form>
+		</div>
+
+
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<th>아이디</th>
+					<th>이름</th>
+					<th>등급번호</th>
+					<th>마지막 접속일</th>
+					<th>회원 상태</th>
+					<th>회원의 상태변경</th>
+
+				</tr>
+			</thead>
+			
+			<tbody>
+				<!-- 리스트에서 받아서 vo로 뿌린다. -->
+				<c:forEach items="${list}" var="vo">
+					<tr class="dataRow">
+					
+						<td class="id">${vo.id}</td>
+						<td>${vo.name}</td>
+						<td class="gradeNo">${vo.gradeNo}</td>
+						<td><fmt:formatDate pattern="yyyy-MM-dd" value="${vo.conDate}"></fmt:formatDate></td>
+						<td>${vo.status}</td>
+						<td onclick='event.cancelBubble=true;'>
+						<form action="updateAdmin.do" method="post" >
+						<input type="hidden" name="id" value="${vo.id}">
+						<select	class="form-control status-select" name="status">
+								<option value="정상">정상</option>
+								<option value="휴면">휴면</option>
+								<option value="탈퇴">탈퇴</option>
+								<option value="강퇴" class="getOut">강퇴</option>
+						</select>
+						<button id="update">변경</button>
+						</form>
+						</td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+
+		<div class="row">
+			<div class="text-right">
+				<pageNav:pageNav listURI="list.do" pageObject="${pageObject }" />
+			</div>
+		</div>
+	</div>
+
+</body>
+</html>

@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seoullo.notice.mapper.NoticeMapper">
+
+	<select id="list" resultType="com.seoullo.notice.vo.NoticeVO">
+	select no,title,writeDate,startDate,endDate,hit
+		from(
+		select rownum rnum,no,title,writeDate,startDate,endDate,hit
+					from(
+						select no,title,writeDate,startDate,endDate,hit
+						from notice
+						<include refid="search"/>
+						order by no desc
+					)
+		)
+		where rnum between #{startRow} and #{endRow}
+	</select>
+	<select id="getTotalRow" resultType="Long">
+		select count(*) from notice
+		<include refid="search"/>
+	</select>
+	<sql id="search">
+		<if test="word !=null and word !=''.toString()">
+			where 1=0
+			<if test="key.indexOf('t'.toString())>=0">
+			 or title like '%'||#{word}||'%'
+			</if>
+			<if test="key.indexOf('c'.toString())>=0">
+			 or content like '%'||#{word}||'%'
+			</if>
+			
+		</if>
+	</sql>
+	
+	<select id="view" resultType="com.seoullo.notice.vo.NoticeVO">
+		select no,title,content,writeDate,startDate,endDate,hit
+		from notice where no = #{no}
+	</select>
+	<update id="increase">
+		update notice set hit=hit+1
+		where no=#{no}
+	</update>
+	<insert id="write">
+		insert into notice(no,title,content,startDate,endDate)
+		values(notice_seq.nextval,#{title},#{content},#{startDate},#{endDate})
+	</insert>
+
+	<update id="update">
+		update notice set title=#{title},
+		content=#{content},startDate=#{startDate},endDate=#{endDate}
+		where no =#{no}
+	</update>
+
+	<delete id="delete">
+		delete from notice
+		where no =#{no}
+	</delete>
+</mapper>

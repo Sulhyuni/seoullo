@@ -1,0 +1,98 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>QnA</title>
+<style type="text/css">
+
+ .hr {
+    border: 0;
+    height: 2px;
+    background: #ccc;
+  }
+  
+.contentDiv{
+	text-align: center;
+	height: 10em;
+}
+
+</style>
+
+<script type="text/javascript">
+	$(function() {
+		$("#deleteBtn1").click(function () {
+			//alert("삭제버튼 클릭");
+			if(!confirm("질문을 삭제하면 답변도 삭제됩니다. 정말 삭제 하시겠습니까?"))
+				return false;
+			alert("삭제되었습니다.");
+		});		
+		$("#deleteBtn2").click(function () {
+			//alert("삭제버튼 클릭");
+			if(!confirm("답변글을 삭제 하시겠습니까?"))
+				return false;
+			alert("삭제되었습니다.");
+		});		
+	});
+</script>
+ 
+
+</head>
+<body>
+<div  class="container">
+	<div class="col-md-12">
+		<h1>QnA VIEW</h1>
+	</div>
+	<div class="col-md-12">
+		<hr class= "hr">
+	</div>
+	<table class="table">
+		<thead>
+			<tr>
+				<th>|	질문번호 : ${vo.qnaNo}</th>
+				<th>|	장소 : ${vo.region}</th>
+				<th>|	제목 : ${vo.title} </th>
+				<th>|	작성자 : ${vo.id}</th>
+				<th>|	응답상태  : ${vo.status }</th>
+				<th>|	작성일 : <fmt:formatDate value="${vo.writeDate}"  pattern="yyyy-MM-dd"/></th>
+				<th>|	조회수 : ${vo.hit}</th>
+			</tr>
+		</thead>
+	</table>
+		<div class = "col-md-12">
+			<div class="contentDiv" style="white-space:pre;">${vo.content }</div>
+		</div>
+		<div class="col-md-12">
+			<hr class= "hr">
+		</div>
+	
+<!-- 	답글은 수정만 할 수 있다. -->
+	<c:if test="${login.id == vo.id }">
+		<a href="update.do?qnaNo=${vo.qnaNo }" class="btn btn-default" id="updateBtn">수정</a>
+		<c:if test="${vo.levNo == 0}">
+				<a href="delete.do?refNo=${vo.refNo }" class="btn btn-default" id="deleteBtn1">삭제</a>
+		</c:if>
+	
+<%-- 		<c:if test="${vo.levNo >= 1}"> --%>
+<%-- 				<a href="answerDelete.do?qnaNo=${vo.qnaNo }" class="btn btn-default" id="deleteBtn2">삭제</a> --%>
+<%-- 		</c:if> --%>
+	</c:if>
+	
+		
+<!-- 	가이드만 등록버튼 보이기 -->
+<!-- 	답글등록은 levNo=0 에만 등록 가능하다. -->
+	<c:if test="${vo.levNo == 0 && (login.gradeNo ==2 || login.gradeNo ==3)}">
+		<a href="answer.do?qnaNo=${vo.qnaNo }&page=${param.page }&perPageNum=${param.perPageNum}"  class="btn btn-default" >답글</a>
+	</c:if>
+	<a href="list.do"  class="btn btn-default" style="float: right;">리스트</a>
+	<a href="/tour/view.do?no=${vo.tourNo}"  class="btn btn-info" >해당 투어일정 보러가기</a>
+	
+<div>
+	 
+</div>	
+</div>
+</body>
+</html>

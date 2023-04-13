@@ -1,0 +1,19 @@
+package com.seoullo.tour.vo;
+
+import java.util.List;
+
+import lombok.Data;
+
+@Data
+public class TourVO {
+	
+	private Long no, hit;
+	private String status, type, title, description, region, guideId, thumbnail, mainImg, subImg, subtitle, content, meetPlace;
+	private Double meetLat, Meetlng;
+	private List<TourdateVO> tourdateList;
+	private List<ScheduleVO> scheduleList;
+	private List<TourpointVO> tourpointList;
+	private List<String> tagList;
+	private List<String> checkpointList;
+
+}

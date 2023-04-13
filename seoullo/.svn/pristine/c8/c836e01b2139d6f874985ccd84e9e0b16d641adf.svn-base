@@ -1,0 +1,5 @@
+package com.seoullo.cart.mapper;
+
+public class CartMapper {
+
+}

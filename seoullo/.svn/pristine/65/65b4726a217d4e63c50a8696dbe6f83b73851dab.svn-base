@@ -1,0 +1,54 @@
+package com.seoullo.notice.service;
+
+import java.util.List;
+
+import javax.inject.Inject;
+
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import com.seoullo.notice.mapper.NoticeMapper;
+import com.seoullo.notice.vo.NoticeVO;
+import com.webjjang.util.PageObject;
+
+@Service
+@Qualifier("noticeServiceImpl")
+public class NoticeServiceImpl implements NoticeService {
+
+	@Inject
+	private NoticeMapper mapper;
+	
+	
+	@Override
+	public List<NoticeVO> list(PageObject pageObject) {
+		// TODO Auto-generated method stub
+		pageObject.setTotalRow(mapper.getTotalRow(pageObject));
+		return mapper.list(pageObject);
+	}
+
+	@Override
+	public NoticeVO view(long no, int inc) {
+		// TODO Auto-generated method stub
+		if(inc==1)mapper.increase(no);
+		return mapper.view(no);
+	}
+
+	@Override
+	public int write(NoticeVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.write(vo);
+	}
+
+	@Override
+	public int update(NoticeVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.update(vo);
+	}
+
+	@Override
+	public int delete(long no) {
+		// TODO Auto-generated method stub
+		return mapper.delete(no);
+	}
+
+}

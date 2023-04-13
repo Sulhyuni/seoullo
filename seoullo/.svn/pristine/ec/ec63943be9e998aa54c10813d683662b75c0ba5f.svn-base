@@ -1,0 +1,34 @@
+package com.seoullo.anonymous.service;
+
+import java.util.List;
+
+import com.seoullo.anonymous.vo.AnonymousVO;
+
+
+public interface AnonymousService {
+
+	
+			//리스트
+			public List<AnonymousVO>list();
+			
+			//보기
+			public AnonymousVO view(long anonyNo, long inc);
+			
+			
+			//작성
+			public Integer write(AnonymousVO vo);
+			
+			
+			//수정
+			public Integer update(AnonymousVO vo);
+			
+			//삭제
+			public Long delete(long anonyNo);
+			
+			
+//---------------------------------------------------------------------
+	//좋아요
+			public int like(AnonymousVO vo);
+			
+			public int unlike(AnonymousVO vo);
+}

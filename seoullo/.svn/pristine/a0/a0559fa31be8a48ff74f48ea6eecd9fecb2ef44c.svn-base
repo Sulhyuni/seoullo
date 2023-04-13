@@ -1,0 +1,53 @@
+package com.seoullo.review.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.seoullo.review.service.ReviewService;
+import com.seoullo.review.vo.ReviewVO;
+import com.webjjang.util.PageObject;
+
+import lombok.extern.log4j.Log4j;
+
+@Controller
+@RequestMapping("/review")
+@Log4j
+public class ReviewController {
+
+	String path = "/upload/review";
+
+	@Autowired
+	@Qualifier("reviewServiceImpl")
+	private ReviewService service;
+
+	@RequestMapping("/list.do")
+	public String list(@ModelAttribute("pageObject") PageObject pageObject, Model model) {
+		model.addAttribute("list", service.list(pageObject));
+		return "review/list";
+	}
+
+	@RequestMapping("/view.do")
+	public String view(long revNo, int inc, Model model) {
+		model.addAttribute("vo", service.view(revNo, inc));
+		return "review/view";
+	}
+
+	@GetMapping("/writeAnswer.do")
+	public String wrtieAnswerForm(long revNo, Model model) {
+		model.addAttribute("vo", service.view(revNo, 0));
+		return "review/writeAnswer";
+	}
+
+	@PostMapping("/writeAnswer.do")
+	public String write(ReviewVO vo) {
+		service.writeAnswer(vo);
+		return "redirect:list.do?revNo="+vo.getRevNo();
+	}
+
+}

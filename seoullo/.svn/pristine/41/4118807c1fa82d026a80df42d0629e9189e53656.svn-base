@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seoullo.siteqna.mapper.SiteQnaMapper">
+
+
+<!-- 리스트 -->
+<select id="list" resultType="com.seoullo.siteqna.vo.SiteQnaVO">
+select siteNo,title, id, status, hit, writeDate
+from(
+    select rownum rnum, siteNo, title, id, status,hit, writeDate
+    from(
+        select s.siteNo,s.title, m.id, s.status,s.hit, s.writeDate
+            from siteqna s,  member m
+            where s.id=m.id            
+            order by s.siteNo desc
+        )
+     )  where rnum between 1 and 10
+ </select>
+ 
+<!--  질문보기 -->
+<select id="view" resultType="com.seoullo.siteqna.vo.SiteQnaVO">
+	select s.siteNo,s.title, s.content, m.id, s.status,s.hit, s.writeDate
+	from siteqna s,  member m
+	where s.siteNo = #{siteNo} and s.id=m.id
+	order by s.siteNo desc
+</select>
+<!-- 조회수증가 -->
+<update id="increase">
+	update siteqna set hit = hit+1
+	where siteNo = #{siteNo}
+</update>
+ 
+<!-- 질문작성 -->
+<insert id="write">
+	insert into siteqna (siteNo, title, content, id)
+	values(siteQna_seq.nextval, #{title}, #{content}, #{id})
+</insert>
+
+<!-- 질문수정 -->
+<update id="update">
+	update siteqna set title=#{title}, content=#{content}
+	where siteNo=#{siteNo}
+</update>
+
+<!-- 질문삭제  -->
+<delete id="delete">
+	delete from siteqna where siteNo=#{siteNo}
+</delete>
+
+
+
+<!-- 답변작성 -->
+
+<!-- answer --> 
+<insert id="answer">
+	insert into site_answer (ano, siteNo, reply, replyer)
+	values(site_answer_seq.nextval, #{siteNo}, #{reply}, '관리자')
+</insert>
+<!-- 답변달면 상태->응답상태로 변경 -->
+ <update id="statusRefNo">
+	update siteqna set status='응답'
+	where siteNo =#{siteNo} 
+</update>
+
+
+     
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,24 @@
+package com.seoullo.review.vo;
+
+import java.util.Date;
+
+import lombok.Data;
+
+@Data
+public class ReviewVO {
+
+	// review
+	private long tourNo, revNo, rating, hit, refNo, ordNo, levNo, parentNo, replyCnt, likeCnt;
+	private String title, content, id;
+	private Date writeDate;
+
+	// review_image
+	private long imgNo, thumbnail;
+	private String imgName;
+	
+	// etc
+	private long gradeNo;
+	private String nickname, gradeName, tourTitle, tourThumbnail;
+	
+
+}

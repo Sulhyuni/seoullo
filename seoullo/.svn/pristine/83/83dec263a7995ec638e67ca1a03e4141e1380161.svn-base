@@ -1,0 +1,16 @@
+package com.seoullo.book.mapper;
+
+import java.util.List;
+
+import com.seoullo.book.vo.BookVO;
+import com.webjjang.util.PageObject;
+
+public interface BookMapper {
+	
+	public List<BookVO> list(PageObject pageObject);
+	
+	public long getTotalRow(PageObject pageObject);
+	
+	public BookVO view(long no);
+
+}

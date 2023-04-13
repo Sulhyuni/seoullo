@@ -1,0 +1,68 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pageNav" tagdir="/WEB-INF/tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Member's login</title>
+<script type="text/javascript">
+$(function(){
+	$('#view').click(
+			function() {
+			location="view.do";
+				});
+			
+	$('#guideView').click(
+			function() {
+			location="guideView.do";
+			});
+	$('#list').click(
+			function() {
+			location="list.do";
+			});
+			
+	$('#memberBookList').click(
+			function() {
+			location="/book/list.do";
+			});
+			
+	$('#guideBookList').click(
+			function() {
+			location="/tour/list.do";
+			});
+
+	
+});
+</script>
+</head>
+<body>
+	<div class="container" style="border: 2px solid pink; display: flex; align-items: center; justify-content: center; height: 45vh;">
+	
+
+		<h2>마이페이지</h2>
+
+		
+
+			<div>
+			<c:if test="${login.gradeNo ==1 }">
+			<button type="button" id="view">나의 정보보기</button>
+			<button type="button" id="memberBookList">내 예약현황</button>
+			<button type="button" id="">내 후기</button>
+			</c:if>
+			<c:if test="${login.gradeNo ==2 || login.gradeNo ==3}">
+			<button type="button" id="guideView">나의 정보보기</button>
+			<button type="button" id="guideBookList">내 예약현황</button>
+			<button type="button" id="">내 후기</button>
+			</c:if>
+		
+			
+				
+			</div>
+		
+		
+	</div>
+</body>
+</html>

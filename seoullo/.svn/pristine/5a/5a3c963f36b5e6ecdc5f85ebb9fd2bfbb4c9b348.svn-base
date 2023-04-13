@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seoullo.siteqna.mapper.SiteQnaMapper">
+
+<select id="list" resultType="com.seoullo.siteqna.vo.SiteQnaVO">
+select siteNo,title, id, status, hit, writeDate
+from(
+    select rownum rnum, siteNo, title, id, status,hit, writeDate
+    from(
+        select s.siteNo,s.title, m.id, s.status,s.hit, s.writeDate
+            from siteqna s,  member m
+            where s.id=m.id            
+            order by s.siteNo desc
+        )
+     )  where rnum between 1 and 10
+ </select>
+ 
+ 
+ 
+ 
+     
+</mapper>

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seoullo.scheduler.mapper.SchedulerMapper">
+
+	<update id="tourNotNew">
+		UPDATE tour SET status = '예약가능' WHERE status = '신규' AND regdate <![CDATA[<]]> sysdate - 3
+	</update>
+
+	<select id="tourDBFiles1" resultType="String">
+		SELECT thumbnail FROM tour
+	</select>
+	<select id="tourDBFiles2" resultType="String">
+		SELECT mainImg FROM tour
+	</select>
+	<select id="tourDBFiles3" resultType="String">
+		SELECT subImg FROM tour
+	</select>
+	<select id="tourDBFiles4" resultType="String">
+		SELECT image FROM tourpoint
+	</select>
+	
+</mapper>

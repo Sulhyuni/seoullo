@@ -1,0 +1,5 @@
+package com.seoullo.qna.service;
+
+public class QnaServiceImpl {
+
+}

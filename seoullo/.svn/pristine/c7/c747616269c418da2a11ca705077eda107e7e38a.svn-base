@@ -1,0 +1,10 @@
+package com.seoullo.member.vo;
+
+import lombok.Data;
+
+@Data
+public class PaymentVO {
+	private String cardNo, cardName, payDate;  
+	private int paymentNo, payMt, total;
+
+}

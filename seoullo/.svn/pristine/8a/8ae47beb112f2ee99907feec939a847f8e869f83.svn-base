@@ -1,0 +1,33 @@
+package com.seoullo.cart.vo;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import lombok.Data;
+
+@Data
+public class CartVO {
+	
+	private List<CartVO> list = new ArrayList<CartVO>();
+	
+	// cart 테이블
+	private long no, peopleA, peopleB, tourPrice; // 장바구니 번호, 대인, 소인, 투어가격
+	private String mId; // 회원 아이디
+	
+	// tour 테이블
+	private long tourNo; // 투어번호
+	private String type, title, region, thumbnail, guideId; // 종류, 제목, 지역, 썸네일, 가이드아이디
+	
+	// tourDate 테이블
+	private Date day; // 투어일자
+	private String status; // 예약가능 상태 (예약가능, 마감)
+	private long reserveNum, maxNum, priceA, priceB; // 현재예약인원, 최대인원, 대인가격, 소인가격
+	
+	// member 테이블
+	private String id, name, gender, email, tel; // 이름, 성별, 이메일, 연락처
+	
+	// grade 테이블 - 일반회원(1), 일반가이드(2), 슈퍼가이드(3), 운영자(9)
+	private long gradeNo; 
+	private String gradeName;
+}

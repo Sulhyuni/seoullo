@@ -1,0 +1,14 @@
+package com.seoullo.book.vo;
+
+
+import lombok.Data;
+
+@Data
+public class GuideDetailVO {
+	
+	private long bookNo;
+	private String name, tel, email, gender;
+	private long peopleA, peopleB;
+	private String bookStatus;
+
+}

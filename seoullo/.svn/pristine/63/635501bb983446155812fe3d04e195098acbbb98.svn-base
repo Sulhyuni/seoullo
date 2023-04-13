@@ -1,0 +1,46 @@
+package com.seoullo.siteqna.mapper;
+
+import java.util.List;
+
+import com.seoullo.siteqna.vo.SiteAnswerVO;
+import com.seoullo.siteqna.vo.SiteQnaVO;
+
+public interface SiteQnaMapper {
+	
+	//DB 구체적으로 작성
+	
+	//질문리스트
+	public List<SiteQnaVO>list();
+	
+	//검색
+//	public long getTotalRow(PageObject pageObject);
+	
+	//질문보기
+	public SiteQnaVO view(long siteNo);
+	
+	//조회수
+	public long increase(long no);
+
+	//질문작성
+	public Integer write(SiteQnaVO vo);
+	
+	//질문 수정
+	public Integer update(SiteQnaVO vo);
+	
+	//질문 삭제
+	public Long delete(long siteNo); //글번호만 받음
+	
+	//답변보기
+	public SiteAnswerVO answerView(long aNo);
+	
+	//답변작성
+	public Integer answerWrite(SiteAnswerVO aVo);
+	
+	//수정
+	public Integer answerUpdate(SiteAnswerVO aVo);
+	
+	//삭제
+	public Long answerDelete(long no);//글번호만 받음
+	
+
+}

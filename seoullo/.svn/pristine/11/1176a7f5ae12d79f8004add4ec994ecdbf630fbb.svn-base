@@ -1,0 +1,120 @@
+package com.seoullo.tour.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import com.seoullo.tour.mapper.TourMapper;
+import com.seoullo.tour.vo.ScheduleVO;
+import com.seoullo.tour.vo.TourVO;
+import com.seoullo.tour.vo.TourdateVO;
+import com.seoullo.tour.vo.TourpointVO;
+import com.webjjang.util.PageObject;
+
+@Service
+@Qualifier("TourServiceImpl")
+public class TourServiceImpl implements TourService {
+
+	@Autowired
+	private TourMapper mapper;
+
+	@Override
+	public List<TourVO> list(String tag, String title, String region, int closed) {
+		List<TourVO> list = mapper.list(tag, title, region, closed);
+		for (TourVO vo : list) {
+			vo.setTagList(mapper.taglist(vo.getNo()));
+		}
+		return list;
+	}
+
+	@Override
+	public List<TourVO> listByGuide(String id) {
+		List<TourVO> list = mapper.listByGuide(id);
+		for (TourVO vo : list) {
+			vo.setTagList(mapper.taglist(vo.getNo()));
+		}
+		return list;
+	}
+
+	@Override
+	public TourVO view(Long no, int inc) {
+		TourVO vo = mapper.view(no);
+		vo.setTourdateList(mapper.viewTourdate(no));
+		vo.setScheduleList(mapper.viewSchedule(no));
+		vo.setTourpointList(mapper.viewTourpoint(no));
+		vo.setCheckpointList(mapper.viewCheckpoint(no));
+		vo.setTagList(mapper.taglist(vo.getNo()));
+		if (inc == 1)
+			mapper.increaseHit(no);
+		return vo;
+	}
+
+	@Override
+	public Integer write(TourVO vo) {
+		Long tourNo = vo.getNo();
+		mapper.write(vo);
+		for (TourdateVO tourdateVO : vo.getTourdateList()) {
+			tourdateVO.setTourNo(tourNo);
+			mapper.writeTourdate(tourdateVO);
+		}
+		for (ScheduleVO scheduleVO : vo.getScheduleList()) {
+			scheduleVO.setTourNo(tourNo);
+			mapper.writeSchedule(scheduleVO);
+		}
+		for (TourpointVO tourpointVO : vo.getTourpointList()) {
+			tourpointVO.setTourNo(tourNo);
+			mapper.writeTourpoint(tourpointVO);
+		}
+		for (String tag : vo.getTagList()) {
+			mapper.writeTag(tourNo, tag);
+		}
+		for (String checkpoint : vo.getCheckpointList()) {
+			mapper.writeCheckpoint(tourNo, checkpoint);
+		}
+		return 1;
+	}
+
+	@Override
+	public Integer update(TourVO vo, boolean changeImage, boolean changeSchedule, boolean changeTourpoint,
+			boolean changeTag, boolean changeCheckpoint) {
+		Long tourNo = vo.getNo();
+		mapper.updateTour(vo);
+		if (changeImage)
+			mapper.updateImage(vo);
+		if (changeSchedule) {
+			mapper.deleteSchedule(tourNo);
+			for (ScheduleVO scheduleVO : vo.getScheduleList()) {
+				scheduleVO.setTourNo(tourNo);
+				mapper.writeSchedule(scheduleVO);
+			}
+		}
+		if (changeTourpoint) {
+			mapper.deleteTourpoint(tourNo);
+			for (TourpointVO tourpointVO : vo.getTourpointList()) {
+				tourpointVO.setTourNo(tourNo);
+				mapper.writeTourpoint(tourpointVO);
+			}
+		}
+		if (changeTag) {
+			mapper.deleteTag(tourNo);
+			for (String tag : vo.getTagList()) {
+				mapper.writeTag(tourNo, tag);
+			}
+		}
+		if (changeCheckpoint) {
+			mapper.deleteCheckpoint(tourNo);
+			for (String checkpoint : vo.getCheckpointList()) {
+				mapper.writeCheckpoint(tourNo, checkpoint);
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public Integer close(Long no) {
+		return mapper.close(no);
+	}
+
+}

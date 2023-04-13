@@ -1,0 +1,60 @@
+package com.seoullo.qna.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import com.seoullo.qna.mapper.QnaMapper;
+import com.seoullo.qna.vo.QnaVO;
+
+import lombok.Setter;
+
+@Service
+@Qualifier("qnaServiceImpl")
+public class QnaServiceImpl implements QnaService{
+	
+	//service 안에 mapper 있음
+	@Setter(onMethod_= @Autowired)
+	private QnaMapper mapper;
+	
+
+	@Override
+	public List<QnaVO> list() {
+		// TODO Auto-generated method stub
+		return mapper.list();
+	}
+
+	@Override
+	public QnaVO view(long no, long inc) {
+		if(inc==1)
+			mapper.increase(no);
+		return mapper.view(no);
+	}
+
+	@Override
+	public int write(QnaVO vo) {
+		
+		return mapper.write(vo);
+	}
+
+	@Override
+	public int answer(QnaVO vo) {
+
+		return mapper.answer(vo);
+	}
+
+	@Override
+	public int update(QnaVO vo) {
+
+		return mapper.update(vo);
+	}
+
+	@Override
+	public int delete(QnaVO vo) {
+
+		return mapper.delete(vo);
+	}
+
+}

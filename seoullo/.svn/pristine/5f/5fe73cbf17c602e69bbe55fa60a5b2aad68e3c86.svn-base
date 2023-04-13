@@ -1,0 +1,13 @@
+package com.seoullo.event.vo;
+
+
+
+import lombok.Data;
+
+@Data
+public class ImgfileVO {
+	
+	private long fileno,e_no,main;
+	private String filename;
+
+}

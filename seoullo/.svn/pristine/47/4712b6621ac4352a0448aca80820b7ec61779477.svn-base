@@ -1,0 +1,23 @@
+package com.seoullo.review.mapper;
+
+import java.util.List;
+import java.util.Map;
+
+import com.seoullo.review.vo.ReviewReplyVO;
+
+public interface ReviewReplyMapper {
+
+	// 댓글 리스트
+	public List<ReviewReplyVO> list(Map<String, Object> map);
+	public Long getTotalRow(Map<String, Object> map);
+
+	// 댓글 등록
+	public int write(ReviewReplyVO vo);
+
+	// 댓글 수정
+	public int update(ReviewReplyVO vo);
+
+	// 댓글 삭제
+	public int delete(Long repNo);
+
+}

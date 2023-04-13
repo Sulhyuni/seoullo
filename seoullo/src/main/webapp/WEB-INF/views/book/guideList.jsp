@@ -1,0 +1,171 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pageNav" tagdir="/WEB-INF/tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>가이드 예약리스트</title>
+<script type="text/javascript">
+$(function() {
+	$('.tourDayInfoDiv').each(function() {
+		if ($(this).find('#status').text().trim() === '[ 마감 ]') {
+			$(this).find('span').css('color', '#d8421c');
+		}
+	});
+	
+	// 투어 완료 버튼 눌렀을 때 동작 - 후기 작성가능으로 바꾸기
+	$(".tourbtn").click(function(){
+		let bookno = $(this).parents(".dataRow").find("#bookNo").text();
+		if (confirm("투어를 종료하시겠습니까?")) {
+			$.ajax({
+				url: "/book/tourComplete.do",
+				dataType: "json",
+				type: "POST",
+				data: {
+					'no' : bookno,
+				},
+				success: function (result) {
+					if (result === 1) {
+						location.reload();
+					} else {
+						alert("투어 종료처리가 실패했습니다.");
+					}
+				}
+			});
+		} else {
+		  alert("취소되었습니다.");
+		}
+	});
+	
+	$("#listBtn").click(function(){
+		location = "/tour/list.do";
+	})
+});
+</script>
+<style type="text/css">
+.dayDiv{
+	border-bottom: solid 1px #aaa;
+	border-top: solid 1px #aaa;
+	padding: 5px;
+	font-weight: bold;
+}
+.bookDiv{
+	padding: 5px;
+}
+.titleDiv{
+	text-align: center;
+	border-bottom: solid 1px #ddd;
+	margin: 5px 0;
+	color: #4B8A08;
+	padding: 5px;
+}
+.tourDayInfoDiv{
+	border-bottom: solid 1px #ddd;
+	padding-bottom: 6px;
+}
+.tourDayInfoDiv span{
+	font-weight: bold;
+	font-size: 13px;
+	color: #4B8A08;
+}
+#tourTable td, #tourTable th {
+	text-align: center;
+}
+#tourCancel{
+	color: #d8421c;
+	font-weight: bold;
+}
+#listBtn{
+	float: right;
+	margin-right: 5px;
+}
+#tourTitle{
+	font-size: 18px;
+	font-weight: bold;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+	
+		<div class="titleDiv">
+			<span id="tourTitle">${tourvo.guideId }가이드님의 ${tourvo.no }번 투어</span>
+			<button id="listBtn" class="btn btn-default btn-xs">투어리스트</button>
+		</div>
+		<div id="tourInfoDiv">
+			<table id="tourTable" class="table">
+				<thead>
+					<tr>
+						<th>투어명</th>
+						<th>투어지역</th>
+						<th>투어타입</th>
+						<th>출발장소</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>${tourvo.title }</td>
+						<td>${tourvo.region }</td>
+						<td>${tourvo.type }</td>
+						<td>${tourvo.meetPlace }</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		
+		<c:forEach items="${list }" var="list">
+			<div class="tourDayInfoDiv">
+				<span>▶</span>
+				<span><fmt:formatDate pattern="yyyy-MM-dd" value="${list.day }"/></span>
+				<span id="status">[ ${list.status } ]</span>
+				<span>${list.reserveNum } / ${list.maxNum }</span>
+			</div>
+			<div id="tourInfoDiv">
+				<c:if test="${empty list.guideDetailList }">예약 정보가 없습니다.</c:if>
+				<c:if test="${!empty list.guideDetailList }">
+					<table id="bookingTable" class="table">
+						<thead>
+							<tr>
+								<th>예약번호</th>
+								<th>예약자</th>
+								<th>연락처</th>
+								<th>대인</th>
+								<th>소인</th>
+								<th>예약상태</th>
+								<th>투어상태</th>
+							</tr>
+						</thead>
+						<tbody>
+							<c:forEach items="${list.guideDetailList }" var="detail">
+								<tr class="dataRow">
+									<td id="bookNo">${detail.no }</td>
+									<td>${detail.name }</td>
+									<td>${detail.tel }</td>
+									<td>${detail.peopleA }</td>
+									<td>${detail.peopleB }</td>
+									<td>${detail.bookStatus }</td>
+									<c:if test="${detail.bookStatus eq '예약완료' && detail.review eq '작성불가'}">
+									<td><button class="btn-default btn-xs tourbtn">투어종료</button></td>
+									</c:if>
+									<c:if test="${detail.bookStatus eq '예약완료' && (detail.review eq '작성가능' || detail.review eq '작성완료')}">
+									<td>투어종료</td>
+									</c:if>
+									<c:if test="${detail.bookStatus eq '예약취소' }">
+									<td id="tourCancel">투어취소</td>
+									</c:if>
+									<c:if test="${detail.bookStatus eq '예약대기' }">
+									<td>예약대기</td>
+									</c:if>
+								</tr>								
+							</c:forEach>
+						</tbody>
+					</table>					
+				</c:if>
+			</div>
+		</c:forEach>		
+	</div>
+</body>
+</html>

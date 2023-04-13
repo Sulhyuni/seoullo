@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seoullo.cart.mapper.CartMapper">
+
+	<select id="list" resultType="com.seoullo.cart.vo.CartVO">
+		SELECT c.no, c.tourNo, t.thumbnail, t.title, t.region, t.type, td.day, c.peopleA, c.peopleB, c.tourPrice, t.guideId, m.id,
+			td.priceA, td.priceB
+		FROM cart c, tour t, tourDate td, member m
+		WHERE td.tourNo = c.tourNo
+		AND td.day = c.day
+		AND t.no = td.tourNo
+		AND m.id = c.mId
+		AND m.id = #{id}
+		ORDER BY c.no ASC
+	</select>
+	
+	<select id="orderList" resultType="com.seoullo.cart.vo.CartVO">
+		SELECT c.no, c.tourNo, t.thumbnail, t.title, t.region, t.type, td.day, c.peopleA, c.peopleB, c.tourPrice, t.guideId, m.id,
+		td.priceA, td.priceB
+		FROM cart c, tour t, tourDate td, member m
+		WHERE td.tourNo = c.tourNo
+		AND td.day = c.day
+		AND t.no = td.tourNo
+		AND m.id = c.mId
+		AND c.no = #{no}
+		ORDER BY c.no ASC
+	</select>
+	
+	<insert id="add">
+		INSERT INTO cart (no, tourNo, day, peopleA, peopleB, tourPrice, mId)
+		VALUES (cart_seq.NEXTVAL, #{tourNo}, #{day}, #{peopleA}, #{peopleB}, #{tourPrice}, #{mId})
+	</insert>
+
+	<update id="update">
+		UPDATE cart SET peopleA = #{peopleA}, peopleB = #{peopleB}, tourPrice = #{tourPrice}
+		WHERE no = #{no}
+	</update>
+	
+	<delete id="delete">
+		DELETE FROM cart
+		WHERE no = #{no}
+	</delete>
+	
+	<!-- 예약 인원 가져오기 -->
+	<select id="checkReserveNum" resultType="com.seoullo.cart.vo.CartVO">
+		SELECT reserveNum, maxNum, status, day, tourNo
+		FROM tourDate 
+		WHERE day=#{day} and tourNo=#{tourNo}
+	</select>
+	
+</mapper>

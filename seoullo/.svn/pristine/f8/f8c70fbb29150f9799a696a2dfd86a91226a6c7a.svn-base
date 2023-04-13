@@ -1,0 +1,20 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div class="container">
+		주문하기~<br/>
+		투어번호: ${param.no }<br/>
+		대인 : ${param.peopleA }<br/>
+		소인 : ${param.peopleB }<br/>
+		총가격 : ${param.tourPrice }<br/>
+		날짜 : ${param.day }<br/>
+		투어이름 : ${vo.title }
+	</div>
+</body>
+</html>

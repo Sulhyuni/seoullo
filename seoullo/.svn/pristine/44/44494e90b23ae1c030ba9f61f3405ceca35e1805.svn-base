@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seoullo.book.mapper.BookMapper">
+
+	<select id="list" resultType="com.seoullo.book.vo.BookVO">
+		SELECT no, payStatus, payPrice, id
+		FROM (
+			SELECT rownum rnum, no, payStatus, payPrice, id
+			FROM (
+				SELECT b.no, b.payStatus, b.payPrice, m.id
+				From booking b, member m
+				WHERE m.id = b.mid
+				ORDER BY b.no DESC
+			)
+		)	
+		WHERE rnum BETWEEN #{startRow} and #{endRow}	
+	</select>
+	
+	<select id="view" resultType="com.seoullo.book.vo.BookVO">
+		SELECT b.no, t.thumbnail, t.title, t.region, td.day, bd.peopleA, bd.peopleB, 
+		    b.payStatus, b.payPrice, bd.bookStatus, t.guideId, b.mId, b.name, b.gender, b.email, b.tel
+		FROM booking b, bookDetail bd, tour t, tourDate td, member m
+		WHERE b.no = bd.bookNo
+		AND td.tourNo = bd.tourNo
+		AND td.day = bd.day
+		AND t.no = td.tourNo
+		AND m.id = b.mid
+		AND b.no = #{no}
+	</select>
+		
+	<select id="getTotalRow" resultType="Long">
+		SELECT COUNT(*) FROM booking
+	</select>
+
+</mapper>

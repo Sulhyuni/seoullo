@@ -1,0 +1,58 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>QnA</title>
+<style type="text/css">
+
+hr{
+  	  border: 0;
+   	  height: 2px;
+   	  background: #ccc;
+  	}
+  	
+</style>
+</head>
+<body>
+<div class="container">
+	 <div class="col-md-12">
+		<h1>QnA WRITE</h1>
+	</div>
+	<div class="col-md-12">
+		<hr>
+	</div>
+	
+	<div class="card-body">
+		<form action="write.do" method="post" id="writeForm">
+<!-- 			투어 상세보기에서 qna 질문등록 가능하다. 상세보기에서 qna 글등록시 tourNo,region가 넘어가도록 한다. -->
+<%-- 			<input type="hidden" name="tourNo"  value="${vo.tourNo}"> --%>
+<%-- 			<input type="hidden" name="region"  value="${vo.region}"> --%>
+			<input type="hidden" name="id"  value="${login.id}">
+			<div class="form-group">
+				<label>지역</label>
+				<input name="region" class="form-control" id="region" value="${vo.region }" readonly="readonly">
+			</div>
+			<div class="form-group">
+				<label>질문 제목</label>
+				<input name="title" class="form-control" id="title" required="required">
+			</div>
+			<div class="form-group">
+				<label>질문 내용</label>
+				<textarea rows="5" name="content" class="form-control" id="content" required="required" style="white-space:pre;"></textarea>
+			</div>
+<!-- 			<div class="form-group"> -->
+<!-- 				<label>작성자</label> -->
+<!-- 				<input name="id" class="form-control" id="id"> -->
+<!-- 			</div> -->
+			
+			<button class="btn btn-default">등록</button>
+			<button type="reset"  class="btn btn-default">새로입력</button>
+			<button type="button" class="btn btn-default" onclick="history.back()">취소</button>
+		</form>
+	</div>
+
+ </div>
+</body>
+</html>

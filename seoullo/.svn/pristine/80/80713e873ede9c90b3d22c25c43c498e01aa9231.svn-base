@@ -1,0 +1,22 @@
+package com.seoullo.tour.service;
+
+import java.util.List;
+
+import com.seoullo.tour.vo.TourVO;
+import com.webjjang.util.PageObject;
+
+public interface TourService {
+
+	public List<TourVO> list(String tag, String region, int closed, String order, PageObject pageObject);
+
+	public List<TourVO> listByGuide(String id, PageObject pageObject);
+	
+	public TourVO view(Long no, int increaseHit);
+	
+	public Integer write(TourVO vo);
+	
+	public Integer update(TourVO vo);
+	
+	public Integer close(Long no);
+
+}

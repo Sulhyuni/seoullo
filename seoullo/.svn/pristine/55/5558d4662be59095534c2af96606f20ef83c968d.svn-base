@@ -1,0 +1,35 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pageNav" tagdir="/WEB-INF/tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div class="container">
+		<c:forEach items="${list }" var="vo">
+			<div>
+				<div style="margin: 10px 0">
+					<span style="font-size: 12px">예약번호 : ${vo.no }</span>
+					<a href="/book/view.do?no=${vo.no }">
+						<button class="btn-default btn-xs" style="float: right;">
+						상세보기
+						</button>
+					</a>
+				</div>
+				<hr style="margin: 5px 0">
+				<div style="text-align: center;">투어상품정보</div>
+				<hr style="margin: 5px 0">
+					<c:forEach items="${vo.bookDetailList }" var="view">
+						<div>${view.title }</div>
+					</c:forEach>
+			</div>
+		</c:forEach>
+	
+	</div>
+</body>
+</html>

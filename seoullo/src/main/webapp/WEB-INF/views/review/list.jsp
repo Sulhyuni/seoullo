@@ -1,0 +1,148 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pageNav" tagdir="/WEB-INF/tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>후기 게시판</title>
+
+<script type="text/javascript">
+	$(function() {
+
+		// 검색 데이터 유지
+		<c:if test="${!empty pageObject.word}">
+			$("#key").val("${(!empty pageObject.key)?pageObject.key:'t'}");
+			$("#word").val("${pageObject.word}");
+		</c:if>
+		
+		$(".dataRow")
+				.click(
+						function() {
+							var revNo = $(this).find(".revNo").text();
+							location = "view.do?revNo="
+									+ revNo
+									+ "&inc=1"
+									+ "&page=${pageObject.page}&perPageNum=${pageObject.perPageNum}"
+									+ "&key=${pageObject.key}&word=${pageObject.word}";
+						});
+	});
+</script>
+
+<style type="text/css">
+.dataRow:hover {
+	background: #eee;
+	cursor: pointer;
+}
+
+th, td {
+	text-align: center;
+}
+
+.tourThumbnail {
+	width: 70px;
+	height: 70px;
+	border-radius: 10%;
+	overflow: hidden;
+	margin-bottom: 5px;
+}
+
+td.rating i {
+	font-size: 16px;
+	color: #fad103;
+}
+</style>
+</head>
+
+<body>
+	<div class="container">
+		<div class="row"
+			style="margin-bottom: 30px; margin-left: 5px; float: left;">
+			<form action="list.do" method="post">
+				<input type="hidden" name="perPageNum"
+					value="${pageObject.perPageNum }">
+				<div class="input-group">
+					<div class="input-group-prepend">
+						<select class="form-control" id="key" name="key">
+							<option value="t">제목</option>
+							<option value="c">내용</option>
+							<option value="n">작성자</option>
+						</select> <input type="text" class="form-control" placeholder="Search"
+							id="word" name="word">
+						<div class="input-group-append">
+							<button class="btn btn-default"
+								style="background-color: #4b8a08;">
+								<i class="fas fa-search fa-sm" style="color: white;"></i>
+							</button>
+						</div>
+					</div>
+				</div>
+			</form>
+		</div>
+		<div style="float: right">
+			<c:if test="${!empty login}">
+				<a href="myList.do" class="btn btn-default">내 글 보러 가기</a>
+			</c:if>
+		</div>
+		<table class="table">
+			<thead>
+				<tr>
+					<th>번호</th>
+					<th>투어</th>
+					<th>평점</th>
+					<th>제목</th>
+					<th>작성자</th>
+					<th>작성일</th>
+					<th>추천</th>
+					<th>조회</th>
+				</tr>
+			</thead>
+			<!-- td 세로축 중앙 정렬이 안 먹힘... -->
+			<tbody>
+				<c:forEach items="${list }" var="vo">
+					<tr class="dataRow">
+						<td class="revNo">${vo.revNo }</td>
+						<c:choose>
+							<c:when test="${vo.ordNo >= 2 }">
+								<td></td>
+								<td></td>
+								<td style="text-align: left;">&nbsp;&nbsp;&nbsp;&nbsp; <i
+									class="material-icons md"
+									style="font-size: 15px; color: #4b8a08;">subdirectory_arrow_right</i>
+									${vo.title }
+								</td>
+								<td>${vo.nickname } (${vo.gradeName})</td>
+								<td><fmt:formatDate value="${vo.writeDate }"
+										pattern="yyyy-MM-dd HH:mm:ss" /></td>
+								<td></td>
+							</c:when>
+							<c:otherwise>
+								<td class="tourTumbnail"><img src=${vo.tourThumbnail }
+									class="tourThumbnail"><br>${vo.tourTitle }</td>
+								<td class="rating"><c:forEach begin="1" end="${vo.rating}">
+										<i class="material-icons">star</i>
+									</c:forEach> <c:forEach begin="${vo.rating + 1}" end="5">
+										<i class="material-icons" style="color: #a9a9a9">star</i>
+									</c:forEach></td>
+								<td style="text-align: left;">${vo.title }<c:if
+										test="${vo.replyCnt > 0}"> [${vo.replyCnt }]</c:if></td>
+								<td>${vo.nickname } (${vo.gradeName})</td>
+								<td><fmt:formatDate value="${vo.writeDate }"
+										pattern="yyyy-MM-dd HH:mm:ss" /></td>
+								<td><i class="material-icons md" style="font-size: 14px">thumb_up&nbsp;</i>
+									<fmt:formatNumber value="${vo.likeCnt }" pattern="#,###" /></td>
+							</c:otherwise>
+						</c:choose>
+						<td><fmt:formatNumber value="${vo.hit }" pattern="#,###" /></td>
+					</tr>
+				</c:forEach>
+			</tbody>
+		</table>
+		<div style="display: flex; justify-content: center;">
+			<pageNav:pageNav listURI="list.do" pageObject="${pageObject }" />
+		</div>
+	</div>
+</body>
+</html>

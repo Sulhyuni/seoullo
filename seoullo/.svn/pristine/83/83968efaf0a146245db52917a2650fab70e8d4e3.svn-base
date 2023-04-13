@@ -1,0 +1,62 @@
+package com.seoullo.book.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.seoullo.book.service.BookService;
+import com.seoullo.book.vo.BookVO;
+import com.seoullo.tour.service.TourService;
+import com.webjjang.util.PageObject;
+
+import lombok.extern.log4j.Log4j;
+
+@Controller
+@RequestMapping("/book")
+@Log4j
+public class BookController {
+	
+	private String module = "book";
+	
+	@Autowired
+	@Qualifier("bookServiceImpl")
+	private BookService service;
+	
+	@Autowired
+	@Qualifier("tourServiceImpl")
+	private TourService tourService;
+	
+	@RequestMapping("/list.do")
+	public String list(PageObject pageObject, Model model) {
+		log.info("예약리스트");
+		pageObject.setPerPageNum(5);
+		model.addAttribute("list", service.list(pageObject));		
+		return module + "/list";
+	}
+	
+	@RequestMapping("/view.do")
+	public String view(long no, Model model) {
+		log.info("예약 상세보기");
+		model.addAttribute("view", service.view(no));
+		return module + "/view";
+	}
+	
+	@GetMapping("/book.do")
+	public String bookForm(Long no, Model model) {
+		log.info("예약하기 폼");
+		model.addAttribute("vo", tourService.view(no, 0));
+		return module + "/book";
+	}
+	
+	@PostMapping("/book.do")
+	public String book(BookVO vo) {
+		log.info("예약하기 처리");
+		service.book(vo);
+		return "redirect:list.do";
+	}
+}

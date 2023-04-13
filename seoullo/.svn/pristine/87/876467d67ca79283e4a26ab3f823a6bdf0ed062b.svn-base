@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seoullo.qna.mapper.QnaMapper">
+
+
+<!-- list -->
+<select id="list" resultType="com.seoullo.qna.vo.QnaVO">
+<!-- 	select tourNo, region,qnaNo, title, id, status,hit, writeDate, refNo, ordNo, levNo,parentNo -->
+<!-- 	from qna -->
+<!-- 	order by refNo desc, ordNo asc -->
+	
+select tourNo, region, qnaNo, title, id, status,hit, writeDate, refNo, ordNo, levNo,parentNo
+from(
+    select rownum rnum, tourNo,region, qnaNo, title, id, status,hit, writeDate,refNo, ordNo, levNo, parentNo
+    from(
+        select q.tourNo,t.region, q.qnaNo, q.title, m.id, q.status,q.hit, q.writeDate, q.refNo, q.ordNo, q.levNo,q.parentNo
+            from qna q, tour t, member m
+            where (q.tourNo = t.no) and (q.id=m.id)
+            	<include refid="search" />
+            order by refNo desc, ordNo asc
+        )
+     ) 
+      where rnum between #{startRow} and #{endRow}
+</select>
+
+<!-- pageObject -->
+<select id="getTotalRow" resultType="Long">
+	select count(*)
+	from qna
+		<include refid="search"></include>
+</select>
+
+<sql id="search">
+		<if test="word !=null and word !=''.toString()">
+			where 1 = 0
+			<if test="key.indexOf('t'.toString()) >= 0">
+				or title like '%' || #{word} || '%'
+			</if>
+			<if test="key.indexOf('c'.toString()) >= 0">
+				or content like '%' || #{word} || '%'
+			</if>
+			<if test="key.indexOf('w'.toString()) >= 0">
+				or region like '%' || #{word} || '%'
+			</if>
+		</if>
+</sql>
+
+
+
+
+
+
+
+
+
+
+<!-- view -->
+<select id="view" resultType="com.seoullo.qna.vo.QnaVO">
+	select q.qnaNo, m.id, q.title, q.content, q.writeDate,  q.tourNo, t.region,q.status, q.hit,q.refNo, q.ordNo, q.levNo, q.parentNo
+from qna q, tour t, member m
+where (q.qnaNo =#{qnaNo}) and (q.tourNo=t.no)and(q.id=m.id)
+order by q.ordNo asc
+</select>
+
+<!-- increase -->
+<update id="increase">
+	update qna set hit = hit + 1
+	where qnaNo = #{qnaNo}
+</update>
+
+<!-- write -->
+<insert id="write">
+	insert into qna (qnaNo, title, content, id, refNo, ordNo, levNo, parentNo )
+	values(qna_seq.nextval, #{title}, ${content}, ${id}, qna_seq.nextval, 1, 0, #{tourNo})
+</insert>
+
+
+ <!-- answer --> 
+<!-- <update id="answer"> -->
+<!-- 	update qna set ordNo = ordNo + 1 -->
+<!-- 	where refNo =${refNo} and ordNo >=${ordNo}  -->
+<!-- </update> -->
+<!-- <insert id="answer"> -->
+<!-- 	insert into qna(qnaNo, title, content, id, refNo, ordNo, levNo, parentNo) -->
+<!-- 	values(qna_seq.nextval,#{title}, ${content}, ${id}, ${refNo}, ${ordNo}, 1, ${parentNo}) -->
+<!-- </insert> -->
+
+<!-- update -->
+<!-- delete -->
+
+
+
+</mapper>

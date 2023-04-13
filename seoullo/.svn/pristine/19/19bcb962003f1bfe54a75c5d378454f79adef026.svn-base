@@ -1,0 +1,77 @@
+package com.seoullo.member.service;
+
+
+import java.util.List;
+
+import com.seoullo.member.vo.MemberVO;
+import com.webjjang.util.PageObject;
+
+
+public interface MemberService {
+	
+	//구성해야 하는것의 목록- 로그인, 회원가입, 아이디& 비밀번호 찾기(임시비밀번호 생성기만들기),비밀번호 변경, 리스트(운영자용), 회원정보보기(페이지처리), 
+	//운영자의 회원상태 변경(좀 더 생각하기..) , 운영자/일반회원/ 가이드 정보변경하기
+	
+	//로그인
+	public MemberVO login(MemberVO vo);
+	
+	//운영자의 리스트
+	public List<MemberVO>list(PageObject pageObject);
+	
+	//가이드의 결제정보 리스트
+	public List<MemberVO>guideList(String id);
+	
+	//운영자, 일반회원, 가이드의  상세정보 보기
+	public MemberVO view(String id);
+	public MemberVO guideView(String id);
+	
+	//닉네임 중복검사
+	public int checkNickName(String nickName);
+	
+	/////////////////////////////////////////////////위에는 우선 만듦
+	
+	//가이드, 일반회원의 정보변경
+	public int update(MemberVO vo);
+	//가이드, 일반회원의 정보변경
+	public int guideUpdate(MemberVO vo);
+	
+	//운영자의 정보변경
+	public int updateAdmin(String id, String status);
+	
+	//회원탈퇴
+	public int delete(MemberVO vo);
+	//회원탈퇴
+	public int guideDelete(MemberVO vo);
+	
+	//아이디 중복검사
+	public int checkId(String id);
+
+	//아이디 찾기 검색의 결과값이 있어야 해서 int로 넣기
+	public String findId(String name, String e_mail);
+	
+	//비밀번호 찾기  검색의 결과값이 있어야 해서 int로 넣기
+	public String findPw(String name,String id, String e_mail);
+	
+	
+	//비밀번호 변경
+	public int updatePw(String id);
+	
+	//비밀번호가 맞는지 체크
+	public int checkPW(String id);
+	
+	
+	//회원가입
+	public int commonWelcom(MemberVO vo);
+	
+	//가이드 회원가입 
+	public int guideWelcom(MemberVO vo);
+	
+	
+	
+
+	
+	
+	
+	
+
+}

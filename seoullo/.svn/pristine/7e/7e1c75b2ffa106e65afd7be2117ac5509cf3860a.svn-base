@@ -1,0 +1,79 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<script type="text/javascript" src="/js/regEx.js"></script>
+
+<script type="text/javascript">
+
+$(function(){
+	$("#updatePwForm").submit(function(){
+		
+		
+		
+	});
+	
+	$("#cancelBtn").click(function(){
+		history.back();
+	});
+	
+	$("#updatePwForm").submit(function(){
+		
+		// 비밀번호
+		if(!checkData(reg_pw, $("#chgPw"), reg_pw_error_msg, 0 )) {
+			$("#chgPw").val("");
+			return false;
+		}
+		
+		// 비밀번호 확인
+		if(!checkData(reg_pw, $("#chgPw2"), reg_pw_error_msg, 0 )) {
+			$("#chgPw2").val("");
+			return false;
+		}
+		
+		// 비밀번호와 비밀번호 확인 같은지 체크
+		if($("#chgPw").val() != $("#chgPw2").val()){
+			alert("비밀번호가 일치하지 않습니다.");
+			$("#chgPw, #chgPw2").val("");
+			$("#chgPw").focus();
+			return false;
+		}
+		
+	});
+	
+});
+
+</script>
+</head>
+<body>
+<div class="container">
+	<h1>비밀번호 변경</h1>
+	
+	<form action="/member/updatePw.do" method="post" id="updatePwForm">
+		<div class="form-group">
+				<label for="pw">현재 비밀번호</label>
+				<input type="password" class="form-control" id="pw" name="pw">
+		</div>
+	
+		<div class="form-group">
+				<label for="chgPw">신규 비밀번호</label>
+				<input type="password" class="form-control" id="chgPw" name="chgPw">
+		</div>
+	
+		<div class="form-group">
+				<label for="chgPw">신규 비밀번호 확인</label>
+				<input type="password" class="form-control" id="chgPw2">
+		</div>
+		
+		<button type="submit" class="btn">확인</button>
+		<button type="button" id="cancelBtn" class="btn">취소</button>
+	</form>
+	
+
+</div>
+</body>
+</html>

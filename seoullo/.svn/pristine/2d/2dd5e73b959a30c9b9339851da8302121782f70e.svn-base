@@ -1,0 +1,77 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+#region {
+	float:left;
+	text-align: center;
+}
+#title {
+	text-align: center;
+}
+#leftDiv {
+	float:left;
+	width:750px;
+}
+#mainImg {
+	clear:both;
+}
+#rightDiv {
+	background-color: orange;
+	float:right;
+	width:350px;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<div class="main"
+			style="background-color: yellow; width: 100%; height: 300px;">
+			<div id="region" class="col-md-2">${vo.region} | ${vo.type }</div>
+			<div id="title" class="col-md-8"><h1>${vo.title }</h1></div>
+			<div id="mainImg">
+				<img src="${vo.mainImg }" alt="mainImg">
+			</div>
+		</div>
+		<div id="leftDiv">
+			<ul class="nav nav-tabs" role="tablist">
+				<li class="active"><a data-toggle="tab" href="#basic">기본정보</a></li>
+				<li><a data-toggle="tab" href="#schedule">상세일정</a></li>
+				<li><a data-toggle="tab" href="#review">후기</a></li>
+				<li><a data-toggle="tab" href="#qna">문의하기</a></li>
+			</ul>
+			<div class="tab-content">
+				<div id="basic" class="tab-pane fade in active"
+					style="background-color: yellow;">
+					<h3>여기가 기본정보 탭 내부 공간입니다.</h3>
+					<p>가로 너비는 노랑 바탕으로 확인하시고, 확인이 끝나면 위 div 태그의 style="~~"는 지워주세요~</p>
+				</div>
+				<div id="schedule" class="tab-pane fade"
+					style="background-color: yellow;">
+					<h3>여기가 상세일정 탭 내부 공간입니다.</h3>
+					<p>가로 너비는 노랑 바탕으로 확인하시고, 확인이 끝나면 위 div 태그의 style="~~"는 지워주세요~</p>
+				</div>
+				<div id="review" class="tab-pane fade"
+					style="background-color: yellow;">
+					<h3>여기가 후기 탭 내부 공간입니다.</h3>
+					<p>가로 너비는 노랑 바탕으로 확인하시고, 확인이 끝나면 위 div 태그의 style="~~"는 지워주세요~</p>
+				</div>
+				<div id="qna" class="tab-pane fade"
+					style="background-color: yellow;">
+					<h3>여기가 문의 탭 내부 공간입니다.</h3>
+					<p>가로 너비는 노랑 바탕으로 확인하시고, 확인이 끝나면 위 div 태그의 style="~~"는 지워주세요~</p>
+				</div>
+			</div>
+		</div>
+		<div id="rightDiv">
+		<h2>예약 관련 부분</h2>
+		스크롤해도 가만히 있으면 좋겠다...!
+		</div>
+	</div>
+	${vo }
+</body>
+</html>

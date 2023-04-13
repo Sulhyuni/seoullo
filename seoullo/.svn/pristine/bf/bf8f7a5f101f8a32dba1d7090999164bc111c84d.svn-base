@@ -1,0 +1,87 @@
+package com.seoullo.member.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import com.seoullo.member.mapper.MemberMapper;
+import com.seoullo.member.vo.MemberVO;
+import com.seoullo.member.vo.PaymentVO;
+import com.webjjang.util.PageObject;
+
+import lombok.Setter;
+
+
+
+@Service
+@Qualifier("memberServiceImpl")
+public class MemberServiceImpl implements MemberService {
+
+	
+	@Setter(onMethod_= @Autowired)
+	private MemberMapper mapper;
+	
+	
+	@Override
+	public MemberVO login(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.login(vo);
+	}
+
+	@Override
+	public int signUp(MemberVO vo, PaymentVO payVO) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public String findId(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public String findPw(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int updatePw(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public List<MemberVO> list(PageObject pageObject) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public long getTotalRow(PageObject pageObject) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public MemberVO view(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int updateGrade(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+	@Override
+	public int updateMember(MemberVO vo) {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
+}

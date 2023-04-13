@@ -1,0 +1,16 @@
+package com.seoullo.member.vo;
+
+import lombok.Data;
+
+@Data
+public class MemberVO {
+	private String id, pw,  gender, conDate, regDate, status, nickname, e_mail, memo;
+	private int tel; 
+	
+	private String gradeName;
+	private int gradeNo; 
+	
+	private String cardNo, cardName, payDate;  
+	private int paymentNo, payMt, total;
+
+}

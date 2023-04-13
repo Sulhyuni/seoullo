@@ -1,0 +1,33 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div class="container">
+		<form action="update.do" method="post">
+			<div class="form-group">
+				<label>번호</label> <input name="revNo" class="form-control"
+					id="revNo" readonly="readonly" value="${vo.revNo }">
+			</div>
+			<div class="form-group">
+				<label>제목</label> <input name="title" class="form-control"
+					id="title" value="${vo.title }">
+			</div>
+			<div class="form-group">
+				<label>내용</label>
+				<textarea rows="10" name="content" class="form-control" id="content"
+					style="resize: none">${vo.content }</textarea>
+			</div>
+			<div class="form-group">
+				<label>평점</label> <input name="rating" class="form-control"
+					id="rating" value="${vo.rating }">
+			</div>
+			<button>등록</button>
+		</form>
+	</div>
+</body>
+</html>

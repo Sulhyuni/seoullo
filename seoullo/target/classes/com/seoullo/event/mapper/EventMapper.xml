@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seoullo.event.mapper.EventMapper">
+
+<select id="list" resultType="com.seoullo.event.vo.EventVO">
+select e_no,e_title,e_startDate,e_endDate,e_writeDate,e_date,e_hit,filename
+	from(
+		select rownum rnum, e_no,e_title,e_startDate,e_endDate,e_writeDate,e_date,e_hit,filename
+			from(
+				select e.e_no,e.e_title,e.e_startDate,e.e_endDate,e.e_writeDate,e.e_date,e.e_hit,i.filename
+					from event e,imgfile i
+					where (i.main=1) and (e.e_no = i.e_no)
+					order by e_no desc
+			) 
+		)
+	 	where rnum between #{startRow} and #{endRow}
+</select>
+
+<select id="getTotalRow" resultType="Long">
+		select count(*) from event
+		
+	</select>
+
+
+<select id="view" resultType="com.seoullo.event.vo.EventVO"> 
+ select e_no,e_title,e_content,e_startDate,e_endDate,e_writeDate,e_date,e_hit,filename
+from event
+where e_no =#{e_no}
+ </select>
+
+<select id="viewFile" resultType="com.seoullo.event.vo.ImgfileVO">
+	select fileno,filename,main
+	from imgfile
+	where e_no=#{e_no}
+</select>
+<select id="apply" resultType="com.seoullo.event.vo.ApplyEventVO">
+SELECT a.apply_no, e.e_no, m.id, a.e_status
+FROM applyEvent a
+JOIN event e ON a.e_no = e.e_no
+JOIN member m ON a.id = m.id
+WHERE e.e_no = #{e_no} AND m.id = #{id}
+	</select>
+	
+<insert id="apply2">
+insert into applyEvent(apply_no,e_no,e_status,id)
+VALUES(apply_no_seq.NEXTVAL,#{e_no},#{e_status},#{id})
+</insert>
+<update id="increase">
+		update event set e_hit=e_hit+1
+		where e_no=#{e_no}
+	</update>
+	
+
+<insert id="write">
+<selectKey keyProperty="e_no" order="BEFORE" resultType="Long">
+	select event_no_seq.nextval from dual
+</selectKey>
+	insert into event(e_no,e_title,e_content,e_startDate,e_endDate,e_date)
+	values(#{e_no},#{e_title},#{e_content},#{e_startDate},#{e_endDate},#{e_date})
+
+</insert>
+
+<insert id="writeFile">
+insert into imgfile(fileno,e_no,filename,main)
+values(FILE_SEQ.nextval,#{e_no},#{filename},#{main})
+</insert>
+
+<update id="update">
+
+    update event set e_title =#{e_title}, e_content = #{e_content},e_startDate=#{e_startDate},
+    e_endDate=#{e_endDate},e_date=#{e_date}
+		where e_no = #{e_no}
+</update>
+
+<update id="updateFile">
+  update imgfile set filename = #{filename}
+	where fileno = #{fileno}
+    
+</update>
+<update id="mainDel">
+	update imgfile set main =0
+	where e_no = #{e_no}
+</update>
+<update id="main">
+	update imgfile set main =1
+	where fileno =#{fileno}
+</update>
+
+<delete id="delete">
+	delete from event
+	where e_no=#{e_no}
+</delete>
+<delete id="deleteFile">
+	delete from imgfile
+	where fileno=#{fileno}
+</delete>
+
+</mapper>

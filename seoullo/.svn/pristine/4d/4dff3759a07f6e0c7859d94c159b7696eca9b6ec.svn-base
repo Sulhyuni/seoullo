@@ -1,0 +1,194 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pageNav" tagdir="/WEB-INF/tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+textarea:focus {
+  outline: none;
+}
+button:focus {
+  outline: none;
+}
+input:focus {
+  outline: none;
+}
+#listBtn{
+	float: right; 
+	margin-left: 5px;
+}
+#modifyBtn {
+	float: right; 
+	margin-left: 5px;
+}
+.title {
+	border-bottom: solid 1px #aaa;
+	color :#4B8A08;
+	font-weight: bold;
+	font-size: 16px;
+	padding: 5px;
+	margin-top: 20px;
+}
+#payInfoDiv{
+	text-align: center;
+	border-bottom: solid 1px #ddd;
+	border-top: solid 1px #ddd;
+	padding: 5px;
+	font-weight: bold;
+}
+#day{
+	display: none;
+} 
+#cancelDiv{
+	padding-top: 10px;
+	padding-left: 20px;
+}
+#no{
+	border: none;
+	font-weight: bold;
+	font-size: 14px;
+	width: 30px;
+}
+hr{
+	margin: 0;
+}
+.bookStatusSpan {
+	font-weight: bold;
+	font-size: 14px;
+	color :#d8421c;
+}
+#img{
+	width: 80px;
+	height : 80px;
+	border-radius: 10%;
+	overflow: hidden;
+	margin-left: 60px;
+}
+</style>
+<script type="text/javascript">
+$(function(){
+	$("#listBtn").click(function(){
+		location="/book/list.do";
+	});
+	$("#cancelForm").submit(function() {
+		const result = confirm('예약을 취소하시겠습니까?');
+		return result;
+	});
+	$("#modifyBtn").click(function(){
+		let no = $(this).parent(".title").find("#modifyNo").text();
+		location="/book/modify.do?no="+no;
+	});
+	
+});
+</script>
+</head>
+<body>
+	<div class="container">	
+		<div class="title">
+			<span> 예약번호 : <span id="modifyNo">${view.no }</span> </span>
+			<button id="listBtn" type="button" class="btn-default btn-xs">예약리스트</button>
+			<c:if test="${login.gradeNo == 9 }">
+			<button id="modifyBtn" type="button" class="btn-default btn-xs">예약정보수정</button>
+			</c:if>
+		</div>
+
+		<div class="title">예약자정보</div>
+			<table id="tourTable" class="table">
+				<thead>
+					<tr>
+						<th>이름</th>
+						<th>성별</th>
+						<th>이메일</th>
+						<th>연락처</th>
+						<th>예약일자</th>
+						<th>결제금액</th>
+						<th>결제수단</th>
+						<th>결제상태</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>${view.name }</td>
+						<td>${view.gender }</td>
+						<td>${view.email}</td>
+						<td>${view.tel}</td>
+						<td><fmt:formatDate pattern="yyyy-MM-dd" value="${view.bookDate }"/></td>
+						<td>${view.payPrice}</td>
+						<td>${view.payMethod}</td>
+						<td>${view.payStatus}</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			<c:if test="${view.payMethod eq '무통장입금'}">
+				<div id="payInfoDiv">
+					입금 하실 곳 : 농협 101-12345-12345-12 김이젠
+				</div>		
+			</c:if>	
+			
+			<div class="title">투어정보</div>
+			
+			<!-- 투어정보 여러개 -->
+			<table id="tourTable" class="table">
+				<thead>
+					<tr>
+						<th>투어번호</th>
+						<th></th>
+						<th>투어명</th>
+						<th>투어타입</th>
+						<th>투어지역</th>
+						<th>투어날짜</th>
+						<th>대인</th>
+						<th>소인</th>
+						<th>예약상태</th>
+					</tr>
+				</thead>
+				<tbody>
+					<c:forEach items="${view.bookDetailList }" var="vo">
+					<tr>
+						<td>${vo.no }</td>
+						<td><img id="img" src="${vo.thumbnail }" class="img" alt="${vo.thumbnail }"></td>
+						<td>${vo.title }</td>
+						<td>${vo.region }</td>
+						<td>${vo.type }</td>
+						<td><fmt:formatDate pattern='yyyy-MM-dd' value='${vo.day }' /></td>
+						<td>${vo.peopleA }</td>
+						<td>${vo.peopleB }</td>
+						<td>${vo.bookStatus }</td>
+					</tr>
+					</c:forEach>
+				</tbody>
+			</table>
+			
+			<div class="title">예약 취소하기</div>
+			
+			<c:forEach items="${view.bookDetailList }" var="vo">
+				<form id="cancelForm" action="/book/cancel.do" Method="POST">
+					<div id="cancelDiv">
+						<label for="name">취소하실 투어 번호 </label>
+						▶<input id="no" name="no" value="${vo.no }">						
+						<input type="hidden"name="tourNo" value="${vo.tourNo }">
+						<input type="text" id="day" name="day" value="<fmt:formatDate pattern='yyyy-MM-dd' value='${vo.day }' />">
+						<input type="hidden" name="peopleA" value="${vo.peopleA }"> 
+						<input type="hidden" name="peopleB" value="${vo.peopleB }"> 
+						<c:if test="${(vo.bookStatus eq '예약대기' || vo.bookStatus eq '예약완료') && vo.review eq '작성불가'}">
+							<button class="btn-danger btn-xs">예약취소</button>
+						</c:if>
+						<c:if test="${vo.bookStatus eq '예약취소' }">
+							<span class="bookStatusSpan">취소가 완료된 투어입니다.</span>
+						</c:if>
+						<c:if test="${vo.review eq '작성완료' || vo.review eq '작성가능'}">
+							<span class="bookStatusSpan">투어가 종료되어 취소가 불가합니다.</span>
+						</c:if>
+					</div>
+					<hr/>
+				</form>	
+			</c:forEach>			
+		</div>
+</body>
+</html>

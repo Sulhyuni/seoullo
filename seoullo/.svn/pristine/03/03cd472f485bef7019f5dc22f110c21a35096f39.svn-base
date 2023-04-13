@@ -1,0 +1,5 @@
+package com.seoullo.siteqna.vo;
+
+public class SiteQnaVO {
+
+}

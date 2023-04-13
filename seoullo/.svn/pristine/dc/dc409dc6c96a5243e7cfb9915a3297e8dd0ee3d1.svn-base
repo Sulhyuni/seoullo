@@ -1,0 +1,31 @@
+package com.seoullo.cart.controller;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.seoullo.cart.service.CartService;
+
+import lombok.extern.log4j.Log4j;
+
+@Controller
+@RequestMapping("/cart")
+@Log4j
+public class CartController {
+	
+	private String module= "cart";
+	
+	@Autowired
+	@Qualifier("cartServiceImpl")
+	private CartService service;
+	
+	@RequestMapping("/list.do")
+	public String list(Model model) {
+		log.info("장바구니리스트");
+		model.addAttribute("list", service.list());
+		return module + "/list"; 
+	}
+
+}

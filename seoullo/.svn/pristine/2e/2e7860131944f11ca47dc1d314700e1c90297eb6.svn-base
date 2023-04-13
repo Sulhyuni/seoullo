@@ -1,0 +1,68 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+<form method="post">
+TOUR<br>
+<!-- type에 따라 schedule 칸 다르게 나오게!! -->
+<input name="type">
+<input name="title">
+<input name="description">
+<input name="region">
+<input name="guideId">
+<input name="thumbnail">
+<input name="mainImg">
+<input name="subImg">
+<input name="subtitle">
+<input name="content">
+<br>TOURDATE<br>
+<input name="count" type="hidden" value="1">
+<input name="day" type="date">
+<input name="maxNum" type="number">
+<input name="priceA" type="number">
+<input name="priceB" type="number">
+
+<br>schedule<br>
+<input name="count" type="hidden" value="1">
+1일차<input name="dayNum" type="hidden" value="1">
+<input name="count" type="hidden" value="2">
+<input name="starthour" type="number" min="0" max="23">
+<input name="startminute" type="number" min="0" max="59">
+<input name="schedule">
+<input name="schDescription">
+<input name="scheduleNum" type="hidden" value="2">
+<input name="starthour" type="number" min="0" max="23">
+<input name="startminute" type="number" min="0" max="59">
+<input name="schedule">
+<input name="schDescription">
+
+<br>tourpoint<br>
+<input name="count" type="hidden" value="2">
+<input name="pointImage">
+<input name="pointTitle">
+<input name="pointContent">
+<input name="pointImage">
+<input name="pointTitle">
+<input name="pointContent">
+
+<br>tag<br>
+<input name="count" type="hidden" value="2">
+<input name="tag">
+<input name="tag">
+
+<br>checkpoint<br>
+<input name="count" type="hidden" value="2">
+<input name="checkpoint">
+<input name="checkpoint">
+<button>등록</button>
+</form>
+<hr>
+결과: ${vo }
+
+</body>
+</html>

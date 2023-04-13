@@ -1,0 +1,91 @@
+package com.seoullo.siteqna.controller;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+import com.seoullo.siteqna.service.SiteQnaService;
+import com.seoullo.siteqna.vo.SiteQnaVO;
+
+import lombok.extern.log4j.Log4j;
+
+@Controller
+@RequestMapping("/siteqna")
+@Log4j
+public class SiteQnaController {
+
+	@Autowired
+	@Qualifier("siteQnaServiceImpl")
+	private SiteQnaService service;
+	
+	//리스트
+	@RequestMapping("/list.do")
+	public String list(Model model) {
+		log.info("siteqna list.................................");
+		model.addAttribute("list",service.list());
+		return "siteqna/list";
+	}
+	
+	//질문보기
+	@RequestMapping("/view.do")
+	public String view(long siteNo, long inc,Model model) {
+		log.info("siteqna view.................................");
+		log.info("siteNo = " +siteNo + ", inc = "+inc);
+		model.addAttribute("vo",service.view(siteNo, inc));
+		return "siteqna/view";
+	}
+	
+	//작성폼
+	@GetMapping("/write.do")
+	public String writeForm() {
+		log.info("siteqna writeForm.................................");
+		return "siteqna/write";
+	}
+	//작성처리
+	@PostMapping("/write.do")
+	public String write(SiteQnaVO vo, HttpSession session) {
+		log.info("siteqna write.................................");
+		//session에서 id 받아오기
+		//개발 완료 후 주석 풀기
+//				String id=((MemberVO)session.getAttribute("login")).getId();
+//				vo.setId(id);
+				
+		//개발중 id 하드코딩
+		vo.setId("test5");				
+		service.write(vo);		
+		log.info(vo);
+		return "redirect:list.do";
+	}
+	
+	//질문수정
+	@GetMapping("/update.do")
+	public String updateForm(long siteNo, Model model) {
+		log.info("siteqna updateForm.................................");
+		model.addAttribute("vo",service.view(siteNo, 0));
+		return "siteqna/update";
+	}
+	//질문수정처리
+	@PostMapping("/update.do")
+	public String update(SiteQnaVO vo) {
+		log.info("siteqna update.................................");
+		service.update(vo);
+		return "redirect:view.do?siteNo="+vo.getSiteNo()+"&inc=0";
+	}
+	
+	//삭제 - 번호만 가져온다
+	@GetMapping("/delete.do")
+	public String delete(long siteNo) {//no
+		log.info("siteqna delete.................................");
+		//DB처리
+		service.delete(siteNo);
+		return "redirect:list.do";
+	} 
+	
+}

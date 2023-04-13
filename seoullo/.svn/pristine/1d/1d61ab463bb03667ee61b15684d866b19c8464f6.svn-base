@@ -1,0 +1,101 @@
+package com.seoullo.anonymous.controller;
+
+import java.util.HashMap;
+import java.util.Map;
+import javax.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+import com.seoullo.anonymous.service.AnonyReplyService;
+import com.seoullo.anonymous.vo.AnonyReplyVO;
+import com.seoullo.member.vo.MemberVO;
+import com.webjjang.util.PageObject;
+
+import lombok.extern.log4j.Log4j;
+
+@RestController
+@RequestMapping("/anonyreply")
+@Log4j
+public class AnonyReplyController {
+
+	@Autowired
+	@Qualifier("anonyReplyServiceImpl")
+	private AnonyReplyService service;
+	
+	@GetMapping(value = "/list.do",produces = {MediaType.APPLICATION_JSON_UTF8_VALUE,MediaType.APPLICATION_XML_VALUE})
+	public ResponseEntity<Map<String, Object>> list(PageObject pageObject, long anonyNo, HttpSession session,AnonyReplyVO vo){
+		String id =((MemberVO)session.getAttribute("login")).getId();
+		vo.setId(id);
+		Map<String, Object> map = new HashMap<String, Object>();
+		//페이지 정보와 검색 정보를 받는 처리문을 "list"라는 이름으로 map에 담는다.
+		map.put("list", service.list(pageObject, anonyNo));
+		//페이지 네비게이션을 위한 데이터 저장
+		map.put("pageObject", pageObject);
+		return new ResponseEntity<Map<String,Object>>(map,HttpStatus.OK);
+	}
+	
+	
+	@PostMapping(value = "/write.do", consumes = "application/json", 
+			produces = {MediaType.TEXT_PLAIN_VALUE+";charset=utf-8"})
+	public ResponseEntity<String> write(@RequestBody AnonyReplyVO vo, HttpSession session){
+		
+		//session에서 id를 꺼내야한다!!.
+		String id =((MemberVO)session.getAttribute("login")).getId();
+		vo.setId(id);
+		log.info(vo);
+		try {
+			service.write(vo);
+			return new ResponseEntity<String>("댓글이 등록되었습니다.", HttpStatus.OK);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+	
+	
+	@PostMapping(value = "/update.do", consumes = "application/json", 
+			produces = {MediaType.TEXT_PLAIN_VALUE+";charset=utf-8"})
+	public ResponseEntity<String> update(@RequestBody AnonyReplyVO vo){
+		log.info(vo);
+		try {
+			int result=service.update(vo);
+			if(result==1)
+				return new ResponseEntity<String>("댓글이 수정 되었습니다.", HttpStatus.OK);
+			else
+				return new ResponseEntity<String>("댓글 정보를 다시 확인하세요.서버에러", HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+	
+	
+	@PostMapping(value = "/delete.do", 
+			produces = {MediaType.TEXT_PLAIN_VALUE+";charset=utf-8"})
+	public ResponseEntity<String> delete(long rno){
+		log.info(rno);
+		try {
+			int result=service.delete(rno);
+			if(result==1)
+				return new ResponseEntity<String>("댓글이 삭제 되었습니다.", HttpStatus.OK);
+			else
+				return new ResponseEntity<String>("댓글 정보를 다시 확인하세요.서버에러", HttpStatus.INTERNAL_SERVER_ERROR);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new ResponseEntity<String>(HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+		
+	}
+	
+	
+	
+
+}

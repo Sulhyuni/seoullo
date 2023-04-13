@@ -1,0 +1,112 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pageNav" tagdir="/WEB-INF/tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+
+
+div {
+padding: 4px 7px 7px 4px;
+}
+button{
+background-color: #ccffcc;
+border:0px;
+ width: 50px;
+ height: 30px;
+}
+
+</style>
+
+<script type="text/javascript">
+function updateHu() {
+	
+	if ($("#pw").val() == null || $("#pw").val() == "") {
+		alert("비밀번호를 입력해주세요.");
+		$("#pw").focus();
+
+		return false;
+	}
+
+
+	if ($("#pw2").val() == null || $("#pw2").val() == "") {
+		alert("비밀번호 확인 입력창에 입력해주세요");
+		$("#pw2").focus();
+		return false;
+	}
+	
+	if($("#pw").val() != $("#pw2").val()){
+		alert("비밀번호가 서로 일치하지 않습니다.");
+		$("#pw, #pw2").val("");
+		$("#pw").focus();
+		return false;
+	}
+
+	
+
+	if (confirm("휴면 해지를 진행합니다.")) {
+		$("#joinForm").submit();
+	}
+}
+
+
+
+$(function(){
+
+	//이전페이지로 이동
+	$("#cancelBtn").click(function(){
+		history.back();
+	});
+	
+	
+
+	
+	
+});
+
+</script>
+</head>
+<body>
+<div class="container">
+<div class="path">
+			<span>main</span>
+			 <span>&gt;</span>
+			<span>휴면해지</span>
+			
+			
+		</div>
+<div style="border: 2px solid #339933;">
+	<h1>휴면정보 해지하기</h1>
+	
+	<form action="updateHu.do" method="post" id="joinForm">
+		<div class="form-group">
+				<label for="pw">비밀번호</label>
+				<input type="password" class="form-control" id="pw" name="pw">
+				
+		</div>
+	
+	
+		<div class="form-group">
+				<label for="pw2">비밀번호 확인</label>
+				<input type="password" class="form-control" id="pw2"
+				placeholder="비밀번호를 한번 더 입력해주세요.">
+		</div>
+		<div align="right">
+		<button type="button" onclick="updateHu();">확인</button>
+		<button type="button" id="cancelBtn" >취소</button>
+		</div>
+	</form>
+	
+
+</div>
+</div>
+<c:if test="${msg != null }">
+		<%@ include file="../member/common/message.jspf"%>
+	</c:if>
+</body>
+</html>

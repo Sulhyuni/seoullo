@@ -1,0 +1,217 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pageNav" tagdir="/WEB-INF/tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>후기 게시판</title>
+
+<script type="text/javascript">
+	$(function() {
+		// 작은 이미지 클릭 시 큰 이미지로 표시
+		$(".imgData").click(function() {
+			// 변경할 이미지의 imgNo 세팅
+			// data는 소문자로,,,
+			var imgNo = $(this).data("imgno");
+			$("#updateImgNo").val(imgNo);
+			var thumbnail = $(this).data("thumbnail");
+			var alt = $(this).find("img").attr("alt");
+			var src = $(this).find("img").attr("src");
+			// 큰 이미지에 alt, src 정보 전달 
+			$("#bigImg").attr("alt", alt);
+			$("#bigImg").attr("src", src);
+			// imgNo 세팅
+			$("#bigImg").data("imgno", imgNo);
+			// 대표 이미지가 아닌 경우
+			if (thumbnail == 1) {
+				$("#imgDeleteBtn, #thumbnailBtn").hide();
+			} else {
+				$("#imgDeleteBtn, #thumbnailBtn").show();
+			}
+		});
+
+		$("#updateImgBtn").click(function() {
+			// 큰 이미지의 data-imgNo 값을 가져와 변경할 imgNo에 세팅
+			$("#updateImgNo").val($("#bigImg").data("imgNo"));
+			$("#deleteImgName").val($("#bigImg").attr("src"));
+			$("#updateImgDiv").slideDown();
+		});
+
+		$("#cancelBtn").click(function() {
+			$("#updateImgDiv").slideUp();
+		});
+
+		// 대표 이미지로 지정
+		$("#thumbnailBtn")
+				.click(
+						function() {
+							var imgNo = $("#bigImg").data("imgno");
+							location = "updateImageThm.do?revNo=${vo.revNo}&imgNo="
+									+ imgNo
+									+ "&page=${param.page}&perPageNum=${param.perPageNum}&key=${param.key}&word=${param.word}";
+						});
+
+		// 이미지 1개 삭제하기
+		$("#imgDeleteBtn")
+				.click(
+						function() {
+							var imgNo = $("#bigImg").data("imgno");
+							alert(imgNo);
+							location = "deleteImage.do?revNo=${vo.revNo}&imgNo="
+									+ imgNo
+									+ "&deleteImage="
+									+ $("#bigImg").attr("src")
+									+ "&page=${param.page}&perPageNum=${param.perPageNum}&key=${param.key}&word=${param.word}";
+						});
+
+		$("#changeBtn").click(function() {
+			alert($("input[name=imgNo]").val());
+			});
+	});
+</script>
+
+<style type="text/css">
+td.rating i {
+	font-size: 16px;
+	color: #fad103;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<table class="table">
+			<tbody>
+				<tr>
+					<th>번호</th>
+					<td>${vo.revNo }</td>
+				</tr>
+				<tr>
+					<th>투어명</th>
+					<td>${vo.tourTitle }
+				</tr>
+				<tr>
+					<th>제목</th>
+					<td>${vo.title }</td>
+				</tr>
+				<tr>
+					<th>내용</th>
+					<td>${vo.content }</td>
+				</tr>
+				<c:if test="${vo.ordNo < 2}">
+					<tr>
+						<th>평점</th>
+						<td class="rating"><c:forEach begin="1" end="${vo.rating }">
+								<i class="material-icons">star</i>
+							</c:forEach> <c:forEach begin="${vo.rating + 1}" end="5">
+								<i class="material-icons">star_border</i>
+							</c:forEach></td>
+					</tr>
+				</c:if>
+				<tr>
+					<th>작성자</th>
+					<td>${vo.nickname }(${vo.gradeName })</td>
+				</tr>
+				<tr>
+					<th>작성일</th>
+					<td><fmt:formatDate value="${vo.writeDate }"
+							pattern="yyyy-MM-dd HH:mm:ss" /></td>
+				</tr>
+				<tr>
+					<th>조회</th>
+					<td><fmt:formatNumber value="${vo.hit }" pattern="#,###" /></td>
+				</tr>
+			</tbody>
+		</table>
+		<a href="writeAnswer.do?revNo=${vo.revNo }&tourNo=${vo.tourNo }">답글</a>
+		<a href="update.do?revNo=${vo.revNo }">수정</a>
+		<c:if test="${vo.ordNo == 1}">
+			<a href="deleteReview.do?refNo=${vo.refNo }&bookNo=${vo.bookNo}">삭제</a>
+		</c:if>
+		<c:if test="${vo.ordNo >= 2}">
+			<a href="deleteAnswer.do?revNo=${vo.revNo }">삭제</a>
+		</c:if>
+
+		<div class="row">
+			<div class="col-md-12">
+				<!-- 작은 이미지 리스트 만들기 -->
+				<div class="row">
+					<c:forEach items="${list }" var="vo2">
+						<div class="col-md-2 imgData" data-imgno="${vo2.imgNo }"
+							data-thumbnail="${vo2.thumbnail }">
+							<img alt="${vo2.imgName }" src="${vo2.imgName }"
+								style="width: 100%;" class="img-thumbnail">
+						</div>
+					</c:forEach>
+				</div>
+				<!-- 큰 이미지 처리 버튼 -->
+				<div class="row">
+					<div class="col-md-12">
+						<button class="btn btn-success" id="updateImgBtn">파일 변경</button>
+						<button class="btn btn-danger" id="imgDeleteBtn">삭제</button>
+						<button class="btn btn-info" id="thumbnailBtn">대표 이미지</button>
+					</div>
+				</div>
+				<!-- 이미지 변경 폼 -->
+				<div class="row" id="updateImgDiv">
+					<div class="col-md-12">
+						<form action="updateImage.do" method="post"
+							enctype="multipart/form-data">
+							<input type="hidden" name="revNo" value="${vo.revNo }">
+							<!-- 작은 이미지 클릭 시 큰 이미지 imgNo 세팅 -->
+							<input type="hidden" name="imgNo" id="updateImgNo">
+							<input type="hidden" name="page" value="${param.page }">
+							<input type="hidden" name="perPageNum" value="${param.perPageNum }">
+							<input type="hidden" name="key" value="${param.key }">
+							<input type="hidden" name="word" value="${param.word }">
+							<!-- 변경 버튼 클릭 시 큰 이미지의 src를 가져와 세팅 -->
+							<input type="hidden" name="deleteImgName" id="deleteImgName">
+							<div class="form-group">
+								<label>파일 선택: </label>
+								<input class="form-control" name="updateImage" type="file">
+							</div>
+							<button class="btn btn-primary" id="changeBtn">바꾸기</button>
+							<button class="btn btn-warning" type="button" id="cancelBtn">취소</button>
+						</form>
+					</div>
+				</div>
+				<!-- 큰 이미지 1개 보여 주기 -->
+				<div class="row">
+					<div class="col-md-12 text-center">
+						<c:forEach items="${list }" var="vo2">
+							<c:if test="${vo2.thumbnail == 1}">
+								<img alt="${vo2.imgName }" src="${vo2.imgName }" style="width: 70%" class="img-thumbnail" id="bigImg" data-imgNo="${vo2.imgNo }">
+							</c:if>
+						</c:forEach>
+					</div>
+				</div>
+
+			</div>
+		</div>
+
+		<c:if test="${vo.ordNo == 1 }">
+			<c:if test="${login.id ne vo.id}">
+				<c:choose>
+					<c:when test="${empty login}">
+						<button onclick="alert('로그인 후 이용 가능합니다.')">추천</button>${vo.likeCnt}
+				</c:when>
+					<c:otherwise>
+						<form
+							action="${check ne null && check eq true ? 'deleteLike.do' : 'writeLike.do'}"
+							method="post">
+							<input type="hidden" name="id" value="${login.id}"> <input
+								type="hidden" name="revNo" value="${vo.revNo}">
+							<button>${check ne null && check eq true ? '추천 취소' : '추천'}</button>${vo.likeCnt}
+						</form>
+					</c:otherwise>
+				</c:choose>
+			</c:if>
+			<c:if test="${login.id eq vo.id}">
+				<button onclick="alert('본인이 작성한 글은 추천할 수 없습니다.')">추천</button>${vo.likeCnt}
+		</c:if>
+		</c:if>
+	</div>
+</body>
+</html>

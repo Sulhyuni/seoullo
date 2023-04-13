@@ -1,0 +1,16 @@
+package com.seoullo.review.vo;
+
+import java.util.Date;
+
+public class ReviewVO {
+
+	// review
+	private long tourNo, revNo, rating, hit, refNo, ordNo, levNo, parentNo, replyCnt, likeCnt;
+	private String title, content, id;
+	private Date writeDate;
+
+	// review_image
+	private long imgNo, thumbnail;
+	private String imgName;
+
+}

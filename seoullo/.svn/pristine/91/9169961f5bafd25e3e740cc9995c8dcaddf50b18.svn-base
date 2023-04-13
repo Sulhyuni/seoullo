@@ -1,0 +1,87 @@
+package com.seoullo.tour.service;
+
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import com.seoullo.tour.mapper.TourMapper;
+import com.seoullo.tour.vo.ScheduleVO;
+import com.seoullo.tour.vo.TourVO;
+import com.seoullo.tour.vo.TourdateVO;
+import com.seoullo.tour.vo.TourpointVO;
+import com.webjjang.util.PageObject;
+
+@Service
+@Qualifier("TourServiceImpl")
+public class TourServiceImpl implements TourService {
+
+	@Autowired
+	private TourMapper mapper;
+
+	@Override
+	public List<TourVO> list(String tag, String title, String region, int closed) {
+		List<TourVO> list = mapper.list(tag, title, region, closed);
+		for (TourVO vo : list) {
+			vo.setTagList(mapper.taglist(vo.getNo()));
+		}
+		return list;
+	}
+
+	@Override
+	public List<TourVO> listByGuide(String id) {
+		List<TourVO> list = mapper.listByGuide(id);
+		for (TourVO vo : list) {
+			vo.setTagList(mapper.taglist(vo.getNo()));
+		}
+		return list;
+	}
+
+	@Override
+	public TourVO view(Long no, int inc) {
+		TourVO vo = mapper.view(no);
+		vo.setTourdateList(mapper.viewTourdate(no));
+		vo.setScheduleList(mapper.viewSchedule(no));
+		vo.setTourpointList(mapper.viewTourpoint(no));
+		vo.setCheckpointList(mapper.viewCheckpoint(no));
+		if (inc == 1)
+			mapper.increaseHit(no);
+		return vo;
+	}
+
+	@Override
+	public Integer write(TourVO vo) {
+		mapper.write(vo);
+		for (TourdateVO tourdateVO : vo.getTourdateList()) {
+			tourdateVO.setTourNo(vo.getNo());
+			mapper.writeTourdate(tourdateVO);
+		}
+		for (ScheduleVO scheduleVO : vo.getScheduleList()) {
+			scheduleVO.setTourNo(vo.getNo());
+			mapper.writeSchedule(scheduleVO);
+		}
+		for (TourpointVO tourpointVO : vo.getTourpointList()) {
+			tourpointVO.setTourNo(vo.getNo());
+			mapper.writeTourpoint(tourpointVO);
+		}
+		for (String tag : vo.getTagList()) {
+			mapper.writeTag(vo.getNo(), tag);
+		}
+		for (String checkpoint : vo.getCheckpointList()) {
+			mapper.writeCheckpoint(vo.getNo(), checkpoint);
+		}
+		return 1;
+	}
+
+	@Override
+	public Integer update(TourVO vo) {
+		return null;
+	}
+
+	@Override
+	public Integer close(Long no) {
+		return mapper.close(no);
+	}
+
+}

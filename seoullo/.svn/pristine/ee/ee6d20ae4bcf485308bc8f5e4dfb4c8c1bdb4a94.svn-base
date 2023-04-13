@@ -1,0 +1,148 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pageNav" tagdir="/WEB-INF/tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script>
+function addPay() {
+
+		
+		 var cardNo = $("#cardNo").val();
+		  if (cardNo.length < 16 || cardNo.length > 19) {
+		    alert("16자리의 카드번호를 입력해 주셔야 합니다. 카드입력란을 다시한번 확인해주세요.");
+		    return false;
+		  }
+
+
+		//카드회사
+		if ($("#cardName").val() == null || $("#cardName").val() == "") {
+			alert("카드종류를 선택해주세요");
+			$("#cardName").focus();
+			return false;
+		}
+
+
+		if (confirm("결제를 진행합니다.")) {
+			$("#joinForm").submit();
+		}
+
+	}
+
+	$(function() {
+		// 취소버튼 이벤트
+		$("#cancleBtn").click(function() {
+			if (confirm("결제를 취소하시겠습니까?"))
+				location = "/";
+			
+		});
+
+		//카드종류
+		let cardName = '${cardName}';
+		$("#cardName").val(cardName).prop("selected", true);
+		
+		//개월수
+		let payMt = '${payMt}';
+		$("#payMt").val(payMt).prop("selected", true);
+		//가이드 종류
+		let gradeNo = '${gradeNo}';
+		$("gradeNo").val(gradeNo).prop("checked", true);
+
+	});
+
+	$(document).ready(function() {
+		$('#cardNo').on('keyup', function() {
+			if($('#cardNo').val().length > 17){
+            alert("작성해야하는 카드번호의 글자수를 넘었습니다");
+				}
+			});
+
+		//gradeNo의 value값에 따라서 total에 값넣기
+		$('input[name="gradeNo"]').on('change', function() {
+	        if ($(this).val() === '2') {
+	            $('#total').val(150000);
+           
+	        }
+	        else if ($(this).val() === '3') {
+	            $('#total').val(300000);
+
+	        }
+	        
+	    });
+
+
+		});
+
+	
+		</script>
+
+</head>
+<body>
+<div class="container">
+		<form action="addPay.do" method="post" id="joinForm"> 
+		<input name="id" type="hidden"  value="${login.id }">
+			<div>
+				<label>가이드 종류선택</label>
+				<div class="radio">
+					<label><input type="radio" name="gradeNo" id="gradeNo1"
+						value="2" >일반가이드</label>
+				</div>
+				<div class="radio">
+					<label><input type="radio" name="gradeNo" id="gradeNo2"
+						value="3" checked>슈퍼가이드</label>
+					<p>투어 리스트의 상단에 가이드의 소개정보가 노출됩니다! 확실한 홍보효과를 누려보세요!!</p>
+				</div>
+
+			</div>
+
+			<div class="form-group">
+				<label for="cardNo">카드번호</label> <input name="cardNo" id="cardNo"
+					class="form-control " placeholder="'-'를 제외한 숫자의 형태로 입력해주세요. ex)1234123412341234 ">
+			</div>
+
+			<div class="form-group-4">
+				<label for="cardSelect">카드 종류선택</label> <select class="form-control"
+					id="cardName" name="cardName">
+					<option value="">카드의 종류를 선택해주세요</option>
+					<option>BC</option>
+					<option>롯데</option>
+					<option>삼성</option>
+					<option>국민</option>
+					<option>카카오카드</option>
+					<option>신한</option>
+				</select>
+				<!-- 카드종류 옆에 붙도록 작성해야함. 사이즈 체크하고 주석지우기-->
+				<div class="form-group-2">
+					<label for="mothSelect">카드개월수 선택(무이자 없음)</label> <select
+						class="form-control" id="payMt" name="payMt">
+						<option value="0">일시불</option>
+						<option value="2">2개월</option>
+						<option value="3">3개월</option>
+					</select>
+				</div>
+			</div>
+			<p class="total">
+				최종결제금액 <input readonly class="bold text_red" name="total" id="total" value="300000">원
+
+   </p>
+			<div style="float: right;">
+				<button type="button" onclick='addPay();'>결제하기</button>
+				<button type="reset">새로입력</button>
+				<button type="button" id="cancleBtn">취소</button>
+			</div>
+		</form>
+
+
+
+
+
+</div>
+<c:if test="${msg != null }">
+		<%@ include file="../member/common/message.jspf"%>
+	</c:if>
+</body>
+</html>

@@ -1,0 +1,80 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>후기 게시판</title>
+
+<style type="text/css">
+
+/* 평점 스타일 */
+#ratingDiv fieldset {
+	display: inline-block;
+	direction: rtl;
+	border: 0;
+}
+
+#ratingDiv fieldset legend {
+	text-align: right;
+}
+
+#ratingDiv input[type=radio] {
+	display: none;
+}
+
+#ratingDiv label {
+	font-size: 3em;
+	color: transparent;
+	text-shadow: 0 0 0 #f0f0f0;
+}
+
+#ratingDiv label:hover {
+	text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+}
+
+#ratingDiv label:hover ~ label {
+	text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+}
+
+#ratingDiv input[type=radio]:checked ~ label {
+	text-shadow: 0 0 0 rgba(250, 208, 0, 0.99);
+}
+</style>
+</head>
+
+<body>
+	<div class="container">
+		<form action="update.do" method="post">
+			<div class="form-group">
+				<label>번호</label>
+				<input name="revNo" class="form-control" id="revNo" readonly="readonly" value="${vo.revNo }">
+			</div>
+			<br>
+			<div class="form-group">
+				<label>제목</label>
+				<input name="title" class="form-control" id="title" value="${vo.title }">
+			</div>
+			<br>
+			<div class="form-group">
+				<label>내용</label>
+				<textarea rows="10" name="content" class="form-control" id="content" style="resize: none">${vo.content }</textarea>
+			</div>
+			<br>
+			<div class="form-group" id="ratingDiv">
+				<fieldset>
+					<input type="radio" name="rating" value="5" id="rate1" ${vo.rating == 5 ? 'checked' : ''}><label for="rate1">★</label>
+					<input type="radio" name="rating" value="4" id="rate2" ${vo.rating == 4 ? 'checked' : ''}><label for="rate2">★</label>
+					<input type="radio" name="rating" value="3" id="rate3" ${vo.rating == 3 ? 'checked' : ''}><label for="rate3">★</label>
+					<input type="radio" name="rating" value="2" id="rate4" ${vo.rating == 2 ? 'checked' : ''}><label for="rate4">★</label>
+					<input type="radio" name="rating" value="1" id="rate5" ${vo.rating == 1 ? 'checked' : ''}><label for="rate5">★</label>
+				</fieldset>
+			</div>
+			<br>
+			<button type="reset" class="btn btn-default">초기화</button>
+			<button type="button" class="btn btn-default" onclick="history.back()">취소</button>
+			<button class="btn btn-default">등록</button>
+		</form>
+	</div>
+</body>
+</html>

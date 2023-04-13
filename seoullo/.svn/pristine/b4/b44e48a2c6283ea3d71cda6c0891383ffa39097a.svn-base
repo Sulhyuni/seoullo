@@ -1,0 +1,12 @@
+package com.seoullo.review.vo;
+
+import java.util.Date;
+
+public class ReviewReplyVO {
+
+	// review_reply
+	private long repNo, revNo;
+	private String reply, replyer;
+	private Date replyDate, updateDate;
+
+}

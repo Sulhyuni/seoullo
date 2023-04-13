@@ -1,0 +1,215 @@
+package com.seoullo.member.controller;
+
+import java.util.List;
+
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import com.seoullo.member.service.MemberService;
+import com.seoullo.member.vo.MemberVO;
+import com.webjjang.util.PageObject;
+
+import lombok.extern.log4j.Log4j;
+
+@Controller
+@RequestMapping("/member")
+@Log4j
+public class MemberController {
+	//**휴면 계정만들어야함!!!!
+
+	@Autowired
+	@Qualifier("memberServiceImpl")
+	private MemberService service;
+	String mem = "member";
+	
+	// 로그인(memberVO)
+		@GetMapping("/login.do")
+		public String loginForm() {
+
+			log.info("로그인 폼------------------------");
+
+			return mem + "/login";
+		}
+
+		// 로그인 처리
+		@PostMapping("/login.do")
+		public String login(String id, String pw, HttpSession session,RedirectAttributes rttr) {
+			log.info("로그인 처리...........");
+			log.info("id=" + id + ",pw=" + pw);
+			MemberVO vo = new MemberVO();
+			vo.setId(id);
+			vo.setPw(pw);
+			
+			session.setAttribute("login", service.login(vo));
+			log.info("로그인 되었어요~~~");
+			
+			//회원이 아니면 회원이 아니라고 표시해야함.
+			if(session.getAttribute("login") == null || session.getAttribute("login").equals("id")) {
+				rttr.addAttribute("msg", "아이디나 비밀번호를 다시 확인하여 입력해주세요");
+			
+				return mem + "/login";
+			}
+
+			// 메인으로
+			return "redirect:/";
+
+		}
+
+
+	// 로그아웃 처리
+		@GetMapping("/logout.do")
+		public String logout(HttpSession session, RedirectAttributes rttr) {
+			session.removeAttribute("login");
+			
+			//로그아웃 되었을때 로그아웃 되었다고 메시지 하나 뜨게만들기!
+			
+			log.info("로그아웃 되었어요~~~");
+			//메인으로
+			return "redirect:/";
+		}
+		
+		//휴면계정처리 만들기
+		
+		//운영자의 리스트 - id로 리스트를 뿌리고 운영자가 아니면 들어가지 못하게 하기. 
+		@RequestMapping("/list.do")
+		public String list(MemberVO vo,@ModelAttribute("pageObject") PageObject pageObject, Model model,HttpSession session, RedirectAttributes rttr) {
+		   //아이디를 받아서
+			vo.setId("admin");
+			vo.setGradeNo(9);
+			
+			
+			//vo.setId(((MemberVO) session.getAttribute("login")).getId());
+			
+//			if( session.getAttribute("login") == null || !(vo.getGradeNo()==9)){
+//				
+//				//나중에 메시지도 띄우면 좋겠는데.
+//				rttr.addAttribute("msg", "운영자로 로그인이 안됨");
+//				return "redirect:/";
+//			}else {
+			log.info("리스트 찍어요~~~");
+			
+			model.addAttribute("list", service.list(pageObject));
+			//정보를 15개씩 띄우기
+			pageObject.setPerPageNum(10);
+			
+			return mem +"/list";
+			}
+		
+		
+		//가이드의 결제 리스트
+		@RequestMapping("/guideList.do")
+		public String guideList( String id,Model model,HttpSession session, RedirectAttributes rttr) {
+//			vo.setId(((MemberVO) session.getAttribute("login")).getId());
+//			vo.getGradeNo();
+//			
+//			if( session.getAttribute("login") == null ) {
+//				
+//				rttr.addAttribute("msg", "로그인이 안돼었나 봐요.로그인을 해주세요");
+//				
+//				return mem + "/login";
+//			}
+			MemberVO vo = new MemberVO();
+			vo.setId("test5");
+			
+			List<MemberVO> list= service.guideList(id);
+				log.info("가이드 리스트 찍어요~~~");
+			
+			model.addAttribute("list", list);
+			return mem +"/guideList";
+		}
+		
+		//  일반회원의 상세보기 (MemberVO, paynentVO)'
+		@RequestMapping("/view.do")
+		public String view(String id,HttpSession session, Model model) {
+			MemberVO vo = new MemberVO(); 
+			vo.setId("admin");
+			vo.setGradeNo(9);
+			vo = service.view(id);
+			//vo.setId(((MemberVO) session.getAttribute("login")).getId());
+			log.info("상세보기로 이동합니다===========");
+			model.addAttribute("vo",vo);
+			
+			return mem+"/view";
+		}
+		
+		// 가이드상세보기 (MemberVO, paynentVO)'
+		@RequestMapping("/guideView.do")
+		public String guideView(String id,HttpSession session, Model model) {
+			MemberVO vo = new MemberVO(); 
+			vo.setId("admin");
+			vo.setGradeNo(9);
+			vo = service.guideView(id);
+			//vo.setId(((MemberVO) session.getAttribute("login")).getId());
+			log.info("상세보기로 이동합니다===========");
+			model.addAttribute("vo", vo);
+			
+			return mem+"/guideView";
+		}
+		
+		//가이드, 일반회원 정보변경
+		//updateForm
+		@GetMapping("/update.do")
+		public String updateForm(String id,HttpSession session, Model model){
+//			vo.setId(((MemberVO) session.getAttribute("login")).getId());
+//			vo.getGradeNo();
+			MemberVO vo= new MemberVO();
+			vo.setId("admin");
+			vo.setGradeNo(9);
+			
+			log.info("updateForm==========================");
+			model.addAttribute("view", service.view(id));
+			
+			//이 밑을 어떻게 하지...
+			model.addAttribute("admin", service.updateAdmin(vo));
+			model.addAttribute("nomal", service.updateMember(vo));
+			model.addAttribute("pw", service.updatePw2(vo));
+			return mem + "/update";
+		}
+		
+		//update
+		@PostMapping("/update.do")
+		public String update(String id,MemberVO vo,HttpSession session, Model model) {
+			
+			vo.setId("admin");
+			vo.setGradeNo(9);
+			
+			//vo.setId(((MemberVO) session.getAttribute("login")).getId());
+			
+			int result = service.updateMember(vo);
+			log.info("update실행됨===============================");
+			return "redirect:/view.do";
+		}
+	
+
+	//회원가입 가이드(유효성 검사 만들기) 
+	
+	//회원가입일반 일반회원은 gradeNo값을 컨트롤러에서 넣기
+	
+	//아이디, 닉네임 중복검사
+	
+	// 운영자, 가이드, 일반회원의 상세보기 (MemberVO, paynentVO)
+	
+	//아이디 찾기
+	
+	//비밀번호 찾기
+	
+	//잊어버린 비밀번호를 찾아서 임시받고 변경하는법
+	
+	//회원의 비밀번호 변경하기 
+	
+	//가이드, 일반회원 정보변경
+	
+	//운영자의 정보변경
+
+	//회원들의 탈퇴인데 휴면으로 바꾸는 것.
+
+}

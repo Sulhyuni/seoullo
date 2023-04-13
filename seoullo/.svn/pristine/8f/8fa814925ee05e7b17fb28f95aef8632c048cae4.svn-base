@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+ "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.seoullo.tour.mapper.TourMapper">
+
+	<select id="list" resultType="com.seoullo.tour.vo.TourVO">
+		<include refid="basic" />
+		<include refid="order" />
+	</select>
+	<sql id="basic">
+		<if test="tag == null">
+			SELECT no, status, type, title, description, thumbnail
+			FROM tour WHERE
+			1 = 1
+			<if test="region != null">
+				AND region = #{region}
+			</if>
+			<if test="word != null">
+				AND title LIKE '%'||#{word}||'%'
+			</if>
+		</if>
+		<if test="tag != null">
+			SELECT tr.no, tr.status,
+			tr.type, tr.title, tr.description,
+			tr.thumbnail
+			FROM tour tr, tag tg
+			WHERE tr.no = tg.tourNO AND tg.tag =
+			#{tag}
+		</if>
+	</sql>
+
+	<sql id="order">
+		<if test="order != null">
+			ORDER BY ${order} desc
+		</if>
+		<if test="order == null">
+			ORDER BY regDate desc
+		</if>
+	</sql>
+
+</mapper>

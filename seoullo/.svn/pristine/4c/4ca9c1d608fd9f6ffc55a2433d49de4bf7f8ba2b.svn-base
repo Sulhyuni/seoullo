@@ -1,0 +1,33 @@
+package com.seoullo.tour.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.seoullo.tour.vo.ScheduleVO;
+import com.seoullo.tour.vo.TourVO;
+import com.seoullo.tour.vo.TourdateVO;
+import com.seoullo.tour.vo.TourpointVO;
+import com.webjjang.util.PageObject;
+
+public interface TourMapper {
+
+	//리스트 관련 쿼리
+	public List<TourVO> list(@Param("tag") String tag, @Param("region") String region, @Param("word") String word, @Param("order") String order,
+			@Param("pageObject") PageObject pageObject);
+
+	public List<TourVO> listByGuide(@Param("id") String id, @Param("pageObject") PageObject pageObject);
+	
+	public List<String> taglist(Long tourNo);
+
+	//투어 상세보기 관련 쿼리
+	public TourVO view(Long no);
+	
+	public List<TourdateVO> viewTourdate(Long no);
+	
+	public List<ScheduleVO> viewSchedule(Long no);
+	
+	public List<TourpointVO> viewTourpoint(Long no);
+	
+	public List<String> viewCheckpoint(Long no);
+}

@@ -1,0 +1,17 @@
+package com.seoullo.siteqna.vo;
+
+import java.util.Date;
+
+import lombok.Data;
+@Data
+public class SiteQnaVO {
+
+	private long siteNo,replyCnt;
+	private String id, title, content, status;
+	private Date writeDate;
+	private long hit;
+	
+//	private long aNo ;
+//	private String replyer;
+//	private Date replyDate;
+}

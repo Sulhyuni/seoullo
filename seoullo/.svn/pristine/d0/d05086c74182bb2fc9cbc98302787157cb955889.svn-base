@@ -1,0 +1,35 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<div class="container">
+		<form action="book.do" method="post">
+			주문하기~<br/>
+			투어번호: <input id="tourNo" name="tourNo" value="${param.no }" readonly> <br/>
+			대인: <input id="peopleA" name="peopleA" value="${param.peopleA }" readonly> <br/>
+			소인: <input id="peopleB" name="peopleB" value="${param.peopleB }" readonly> <br/>
+			투어가격: <input id="tourPrice" name="tourPrice" value="${param.tourPrice }" readonly> <br/>
+			날짜: <input id="day" name="day" value="${param.day }"> <br/>
+			투어이름 : ${vo.title }<br/>
+			<hr/>
+			
+			아이디 (hidden) : <input id="id" name="id" value="${login.id }"><br/>
+			이름 : <input id="name" name="name" value="" placeholder="${member.name }"><br/>
+			성별 : <input id="gende" name="gender" value="" placeholder="${member.gender }"><br/>
+			이메일 : <input id="email" name="email" value="" placeholder="${member.e_mail }"><br/>
+			연락처 : <input id="tel" name="tel" value="" placeholder="${member.tel }"><br/>
+			결제방법(신용카드, 무통장입금) : <input id="payMethod" name="payMethod"><br/>
+			총가격 : <input id="payPrice" name="payPrice" value="${param.tourPrice }" readonly><br/>
+			<br/>
+			<button id="bookBtn" class="btn btn-default btn-xl">예약하셈</button>
+			<button id="cancelBtn" class="btn btn-default btn-xl" type="button" onclick="history.back()">취소하셈</button>
+		</form>
+		
+	</div>
+</body>
+</html>

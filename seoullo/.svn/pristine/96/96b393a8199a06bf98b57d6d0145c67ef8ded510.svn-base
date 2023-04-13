@@ -1,0 +1,84 @@
+package com.seoullo.siteqna.service;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+import com.seoullo.siteqna.mapper.SiteQnaMapper;
+import com.seoullo.siteqna.vo.SiteQnaVO;
+
+import lombok.Setter;
+
+@Service
+@Qualifier("siteQnaServiceImpl")
+public class SiteQnaServiceImpl implements SiteQnaService{
+	
+	//service 안에 mapper 있음
+		@Setter(onMethod_= @Autowired)
+		private SiteQnaMapper mapper;
+		
+		
+		
+
+	@Override
+	public List<SiteQnaVO> list() {
+		// TODO Auto-generated method stub
+		return mapper.list();
+	}
+
+	//글본기 + 조회수
+	@Override
+	public SiteQnaVO view(long siteNo, long inc) {
+		if(inc==1)
+			mapper.increase(siteNo);
+		return mapper.view(siteNo);
+	}
+
+	@Override
+	public Integer write(SiteQnaVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.write(vo);
+	}
+
+	@Override
+	public Integer update(SiteQnaVO vo) {
+		// TODO Auto-generated method stub
+		return mapper.update(vo);
+	}
+
+	@Override
+	public Long delete(long siteNo) {
+		// TODO Auto-generated method stub
+		return mapper.delete(siteNo);
+	}
+	
+	
+
+	@Override
+	public SiteQnaVO answerView(long aNo) {
+		// TODO Auto-generated method stub
+		return mapper.answerView(aNo);
+	}
+
+	@Override
+	public Integer answerWrite(SiteQnaVO vo) {
+	 
+		return mapper.answerWrite(vo);
+	}
+
+//	@Override
+//	public Integer answerUpdate(SiteQnaVO aVo) {
+//		// TODO Auto-generated method stub
+//		return mapper.answerUpdate(aVo);
+//	}
+
+	@Override
+	public Long answerDelete(long aNo) {
+		// TODO Auto-generated method stub
+		return mapper.answerDelete(aNo);
+	}
+
+	
+ 
+
+}

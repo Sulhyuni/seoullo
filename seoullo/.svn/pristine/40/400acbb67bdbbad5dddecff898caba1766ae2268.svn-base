@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seoullo.book.mapper.BookMapper">
+
+	<select id="list" resultType="com.seoullo.book.vo.BookVO">
+		SELECT no, payStatus, payPrice, payMethod, id
+		FROM (
+			SELECT rownum rnum, no, payStatus, payPrice, payMethod, id
+			FROM (
+				SELECT DISTINCT b.no, b.payStatus, b.payPrice, b.payMethod, m.id
+				FROM booking b, member m, tour t, bookdetail bd
+				WHERE 1 = 1
+				<include refid="search" />
+				AND m.id = b.mid
+				AND b.no = bd.bookNo
+                AND t.no = bd.tourNo
+				ORDER BY b.no DESC
+			)
+		)	
+		WHERE rnum BETWEEN #{startRow} and #{endRow}	
+	</select>
+	
+	<select id="getTotalRow" resultType="Long">
+		SELECT COUNT(*)
+		FROM booking b
+		<include refid="searchTable" />
+		WHERE 1 = 1
+		<include refid="search" />
+		<include refid="searchJoin" />
+	</select>
+	
+	<sql id="search">
+		<if test="word != null and word != ''.toString()">
+			AND 1 = 0
+			<if test="key.indexOf('t'.toString()) >= 0">
+				OR title LIKE '%' || #{word} || '%'
+			</if>
+			<if test="key.indexOf('n'.toString()) >= 0">
+				OR b.no LIKE '%' || #{word} || '%'
+			</if>
+			<if test="key.indexOf('r'.toString()) >= 0">
+				OR region LIKE '%' || #{word} || '%'
+			</if>
+		</if>
+	</sql>
+
+	<sql id="searchJoin">
+		<if test="word != null and word != ''.toString()">
+			AND m.id = b.mid
+			AND b.no = bd.bookNo
+	        AND t.no = bd.tourNo
+		</if>
+	</sql>
+	
+	<sql id="searchTable">
+		<if test="word != null and word != ''.toString()">
+			, member m, tour t, bookdetail bd
+		</if>
+	</sql>
+	
+	<select id="view" resultType="com.seoullo.book.vo.BookVO">
+		SELECT b.no, m.id, b.name, b.gender, b.email, b.tel,
+				b.bookDate, b.payStatus, b.payMethod, b.payPrice
+		FROM booking b, member m
+		WHERE m.id = b.mid
+		AND b.no = #{no}
+	</select>
+	
+	<select id="viewDetail" resultType="com.seoullo.book.vo.BookDetailVO">
+		SELECT b.no, t.thumbnail, t.title, t.type, t.region, td.day, bd.peopleA, bd.peopleB, 
+		b.payStatus, b.payPrice, bd.bookStatus, t.guideId, b.mId, b.name, b.gender, b.email, b.tel, bd.review
+		FROM booking b, bookDetail bd, tour t, tourDate td, member m
+		WHERE b.no = bd.bookNo
+		AND td.tourNo = bd.tourNo
+		AND td.day = bd.day
+		AND t.no = td.tourNo
+		AND m.id = b.mid
+		AND b.no = #{no}
+	</select>
+	
+	<insert id="book">
+		INSERT INTO booking (no, mId, name, gender, email, tel, payStatus, payMethod, payPrice)
+		VALUES (book_seq.NEXTVAL, #{id}, #{name}, #{gender}, #{email}, #{tel}, #{payStatus}, #{payMethod}, #{payPrice})
+	</insert>
+	
+	<insert id="bookDetail">
+		INSERT INTO bookDetail (no, bookNo, tourNo, day, peopleA, peopleB, tourPrice)
+		VALUES (bookDetail_seq.NEXTVAL, #{bookNo}, #{tourNo}, #{day}, #{peopleA}, #{peopleB}, #{tourPrice})
+	</insert>
+
+</mapper>

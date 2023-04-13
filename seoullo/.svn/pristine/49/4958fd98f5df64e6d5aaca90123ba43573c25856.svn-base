@@ -1,0 +1,133 @@
+package com.seoullo.siteqna.controller;
+
+import javax.print.attribute.standard.Severity;
+import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.fasterxml.jackson.annotation.JsonCreator.Mode;
+import com.seoullo.qna.vo.QnaVO;
+import com.seoullo.siteqna.service.SiteQnaService;
+import com.seoullo.siteqna.vo.SiteQnaVO;
+import com.seoullo.siteqna.vo.SiteQnaVO;
+
+import lombok.extern.log4j.Log4j;
+
+@Controller
+@RequestMapping("/siteqna")
+@Log4j
+public class SiteQnaController {
+
+	@Autowired
+	@Qualifier("siteQnaServiceImpl")
+	private SiteQnaService service;
+	
+	//리스트
+	@RequestMapping("/list.do")
+	public String list(Model model) {
+		log.info("siteqna list.................................");
+		model.addAttribute("list",service.list());
+		return "siteqna/list";
+	}
+	
+	//질문보기
+	@RequestMapping("/view.do")
+	public String view(long siteNo, long inc,Model model) {
+		log.info("siteqna view.................................");
+		log.info("siteNo = " +siteNo + ", inc = "+inc);
+		model.addAttribute("vo",service.view(siteNo, inc));
+		return "siteqna/view";
+	}
+	
+	//질문작성폼
+	@GetMapping("/write.do")
+	public String writeForm() {
+		log.info("siteqna writeForm.................................");
+		return "siteqna/write";
+	}
+	//질문작성처리
+	@PostMapping("/write.do")
+	public String write(SiteQnaVO vo, HttpSession session) {
+		log.info("siteqna write.................................");
+		//session에서 id 받아오기
+		//개발 완료 후 주석 풀기
+//				String id=((MemberVO)session.getAttribute("login")).getId();
+//				vo.setId(id);
+				
+		//개발중 id 하드코딩
+		vo.setId("test5");				
+		service.write(vo);		
+		log.info(vo);
+		return "redirect:list.do";
+	}
+	
+	//질문수정
+	@GetMapping("/update.do")
+	public String updateForm(long siteNo, Model model) {
+		log.info("siteqna updateForm.................................");
+		model.addAttribute("vo",service.view(siteNo, 0));
+		return "siteqna/update";
+	}
+	//질문수정처리
+	@PostMapping("/update.do")
+	public String update(SiteQnaVO vo) {
+		log.info("siteqna update.................................");
+		service.update(vo);
+		return "redirect:view.do?siteNo="+vo.getSiteNo()+"&inc=0";
+	}
+	
+	//질문삭제 - 번호만 가져온다
+	@GetMapping("/delete.do")
+	public String delete(long siteNo) {//no
+		log.info("siteqna delete.................................");
+		//DB처리
+		service.delete(siteNo);
+		return "redirect:list.do";
+	} 
+	
+// 답변-----------------------------------------------------------------------------------
+	
+		//answerForm
+		@GetMapping("/answer.do")
+		public String answerForm(long siteNo, Model model) {
+			log.info("siteqna answerForm.................................");
+			SiteQnaVO vo = service.view(siteNo, 0);
+			vo.setSiteNo(siteNo);
+			model.addAttribute("vo",vo);
+			return "siteqna/answer";
+		}
+
+		//answer
+		@PostMapping("/answer.do")
+		public String answerWrite(SiteQnaVO vo, HttpSession session) {
+			log.info("siteqna answer.................................");
+			//개발 완료 후 주석 풀기
+//			String id=((MemberVO)session.getAttribute("login")).getId();
+//			avo.setId(id);
+//			가이드  gradeNo2 or 3
+			//개발중 id 하드코딩
+			//가이드
+			vo.setId("admin");
+			//DB처리
+			service.answerWrite(vo);
+//			return "redirect:list.do";
+			return "redirect:view.do?siteNo="+vo.getSiteNo()+"&inc=0";
+		}
+		
+		
+		//답변삭제
+		@GetMapping("/answerDelete.do")
+		public String answerDelete(long aNo) {
+			log.info("qna answerDelete.................................");
+			service.answerDelete(aNo);
+			return "redirect:list.do";
+		}
+		
+	
+}

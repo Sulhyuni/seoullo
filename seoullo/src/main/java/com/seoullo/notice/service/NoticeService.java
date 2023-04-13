@@ -1,0 +1,15 @@
+package com.seoullo.notice.service;
+
+import java.util.List;
+
+import com.seoullo.notice.vo.NoticeVO;
+import com.webjjang.util.PageObject;
+
+public interface NoticeService {
+	public List<NoticeVO>list(PageObject pageObject);
+	public NoticeVO view(long no,int inc);
+	public int write(NoticeVO vo);
+	public int update(NoticeVO vo);
+	public int delete(long no);
+
+}

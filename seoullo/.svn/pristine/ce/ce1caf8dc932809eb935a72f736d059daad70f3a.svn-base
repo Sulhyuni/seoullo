@@ -1,0 +1,298 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+
+<style type="text/css">
+#topTitle {
+	float: left;
+	margin-left: 60px;
+}
+#topBtns {
+	float: left;
+	margin: 20px 0px 0px 30px;
+}
+.categoryDiv {
+	width: 100%;
+	margin-top: 25px;
+}
+.categoryTitleDiv {
+	float: left;
+	width: 20%;
+	padding-right: 20px;
+	text-align: right;
+}
+.categoryTitle {
+	font-size: large;
+	font-weight: bolder;
+}
+
+.inputDiv {
+	float:left;
+	padding-left: 30px;
+	border-left: 1px solid #4B8A08;
+	border-collapse: collapse;
+	width:70%;
+}
+.clear {
+	clear: both;
+}
+.halfForm > label, .halfForm > select {
+	float: left;
+}
+label {
+	float: left;
+	margin: 8px;
+}
+.form-control {
+	width: 88%;
+}
+.halfWidth {
+	width: 40%;
+}
+#mapDiv {
+	margin: 20px 0px;
+}
+.sc-dayNum {
+	font-size: medium;
+	font-weight:bold;
+	margin: 10px 0px;
+}
+.sc-addBtn {
+	margin-bottom: 5px;
+}
+
+.sc-time {
+	width: 60px;
+	float: left;
+	margin-right: 10px;
+}
+
+#td-table input {
+	margin: 5px 0px;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		<form method="post" enctype="multipart/form-data">
+			<div id="topDiv">
+				<div id="topTitle">
+					<h1>투어 등록</h1>
+				</div>
+				<div id="topBtns">
+					<button type="button" class="btn btn-info">미리보기</button>
+					<button class="btn btn-primary">등록</button>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="categoryDiv">
+				<div class="categoryTitleDiv">
+					<span class="categoryTitle">기본정보</span>
+				</div>
+				<div class="inputDiv">
+					<input type="hidden" name="guideId" value=${login.getId() } required="required">
+					<div class="form-group halfForm">
+						<label for="region">지역</label>
+						<select name="region" class="form-control halfWidth" required="required">
+							<optgroup label="도심권">
+								<option >종로구</option>
+								<option>중구</option>
+								<option>용산구</option>
+							</optgroup>
+							<optgroup label="서북권">
+								<option>은평구</option>
+								<option>서대문구</option>
+								<option>마포구</option>
+							</optgroup>
+							<optgroup label="동북권">
+								<option>성동구</option>
+								<option>광진구</option>
+								<option>동대문구</option>
+								<option>중랑구</option>
+								<option>성북구</option>
+								<option>강북구</option>
+								<option>도봉구</option>
+								<option>노원구</option>
+							</optgroup>
+							<optgroup label="서남권">
+								<option>강서구</option>
+								<option>양천구</option>
+								<option>영등포구</option>
+								<option>구로구</option>
+								<option>금천구</option>
+								<option>관악구</option>
+								<option>동작구</option>
+							</optgroup>
+							<optgroup label="동남권">
+								<option>서초구</option>
+								<option>강남구</option>
+								<option>송파구</option>
+								<option>강동구</option>
+							</optgroup>
+						</select>
+						<label for="type" style="margin-left: 30px;">종류</label>
+						<select name="type" id="typeSelect" class="form-control halfWidth" required="required">
+							<option data-count="1">당일</option>
+							<option data-count="2">1박2일</option>
+							<option data-count="3">2박3일</option>
+							<option data-count="4">3박4일</option>
+							<option data-count="5">4박5일</option>
+							<option data-count="6">5박6일</option>
+						</select>
+						<div class="clear"></div>
+					</div>
+					<div class="form-group">
+						<label for="title">제목</label>
+						<input name="title" class="form-control" required="required">
+						<div class="clear"></div>
+					</div>
+					<div class="form-group">
+						<label for="description">설명</label>
+						<input name="description" class="form-control" required="required">
+						<div class="clear"></div>
+					</div>
+					<div class="form-group">
+						<label for="tags">태그</label>
+						<input name="tags" class="form-control" required="required">
+						<div class="clear"></div>
+					</div>
+					<div class="form-group">
+						<label for="thumbnailFile">썸네일이미지</label>
+						<input name="thumbnailFile" type="file" required="required">
+						<div class="clear"></div>
+					</div>
+					<div class="form-group">
+						<label for="mainImgFile">메인이미지</label>
+						<input name="mainImgFile" type="file" required="required">
+						<div class="clear"></div>
+					</div>
+					<div class="form-group">
+						<label for="subtitle">소제목</label>
+						<input name="subtitle" class="form-control" required="required">
+						<div class="clear"></div>
+					</div>
+					<div class="form-group">
+						<label for="content">소개글</label>
+						<textarea rows="4" class="form-control" required="required"></textarea>
+						<div class="clear"></div>
+					</div>
+					<div class="form-group">
+						<label for="subImgFile">서브이미지</label>
+						<input name="subImgFile" type="file" required="required">
+						<div class="clear"></div>
+					</div>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="categoryDiv">
+				<div class="categoryTitleDiv">
+					<span class="categoryTitle">예약가능일</span><br>
+					<button type="button" id="td-addBtn" class="btn btn-xs btn-info">추가</button>
+				</div>
+				<div class="inputDiv">
+					<table id="td-table">
+						<tr>
+							<th>날짜</th>
+							<th>최대인원</th>
+							<th>대인가격</th>
+							<th>소인가격</th>
+							<th></th>
+						</tr>
+						<tr>
+							<td><input name="day" type="date" class="form-control" required="required"></td>
+							<td><input name="maxNum" type="number" class="form-control" required="required"></td>
+							<td><input name="priceA" type="number" class="form-control" required="required"></td>
+							<td><input name="priceB" type="number" class="form-control" required="required"></td>
+							<td><button type="button" id="td-changeAllBtn" class="btn btn-xs btn-primary">All</button></td>
+						</tr>
+						<tr>
+							<td><input name="day" type="date" class="form-control" required="required"></td>
+							<td><input name="maxNum" type="number" class="form-control" required="required"></td>
+							<td><input name="priceA" type="number" class="form-control" required="required"></td>
+							<td><input name="priceB" type="number" class="form-control" required="required"></td>
+							<td><button type="button" id="td-deleteBtn" class="btn btn-xs btn-danger">X</button></td>
+						</tr>
+					</table>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="categoryDiv">
+				<div class="categoryTitleDiv">
+					<span class="categoryTitle">투어일정</span>
+				</div>
+				<div class="inputDiv">
+					<div id="meetDiv">
+						<div class="form-group">
+							<label for="meetPlace">출발지</label>
+							<input name="meetPlace" class="form-control" required="required">
+						</div>
+						<div id="mapDiv">
+							<div id="meetMap" style="width:45%; height:350px; float:left;">지도</div>
+							<div id="roadview" style="width:45%; height:350px; float:left;">로드뷰</div>
+							<div class="clear"></div>
+						</div>
+						<input name="meetLat" type="hidden">
+						<input name="meetLng" type="hidden">
+					</div>
+					<div class="sc-each">
+						<div class="sc-dayNum">
+							1일차
+							<button type="button" class="sc-addBtn btn btn-xs btn-info">추가</button>
+						</div>
+						<div class="sc-info">
+							<input name="scheduleNum" type="hidden" value="1">
+							<div class="form-group">
+								<label for="starthour">시간</label>
+								<input name="starthour" type="number" min="0" max="23" class="form-control sc-time" required="required" placeholder="07">
+								<input name="startminute" type="number" min="0" max="59" class="form-control sc-time" required="required" placeholder="30">
+								<label for="schedule">일정</label>
+								<input name="schedule" class="form-control halfWidth" required="required">
+							</div>
+							<div class="form-group">
+								<label for="schDescription">설명</label>
+								<input name="schDescription" class="form-control" required="required">
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="categoryDiv">
+				<div class="categoryTitleDiv">
+					<span class="categoryTitle">투어포인트</span><br>
+					<button type="button" class="tp-addBtn btn btn-xs btn-info">추가</button>
+				</div>
+				<div class="inputDiv">
+					<div class="tp-each">
+						<label for="pointTitle">제목</label>
+						<input name="pointTitle" class="form-control" required="required">
+						<label for="pointContent">설명</label>
+						<input name="pointContent" class="form-control" required="required">
+						<label for="pointImageFile">썸네일이미지</label>
+						<input name="pointImageFile" type="file" required="required">
+					</div>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<div class="categoryDiv">
+				<div class="categoryTitleDiv">
+					<span class="categoryTitle">예약 시<br>주의사항</span><br>
+					<button type="button" class="cp-addBtn btn btn-xs btn-info">추가</button>
+				</div>
+				<div class="inputDiv">
+					<div class="cp-each">
+						<input name="checkpoint" class="form-control" required="required">
+					</div>
+				</div>
+				<div class="clear"></div>
+			</div>
+			<!-- type에 따라 schedule 칸 다르게 나오게!! -->
+			
+		</form>
+	</div>
+</body>
+</html>

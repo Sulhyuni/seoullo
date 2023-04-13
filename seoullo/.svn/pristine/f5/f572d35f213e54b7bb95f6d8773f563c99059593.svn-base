@@ -1,0 +1,96 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script type="text/javascript">
+$(function(){
+	
+	// tourPrice의 합계를 계산해서 payPrice에 넣기
+	let payPrice = 0;
+	$("input[id=tourPrice]").each(function(){
+		let tourPrice = $(this).val();
+		payPrice += parseInt(tourPrice);
+	});	
+	$("#payPrice").val(payPrice);
+	
+	// 새로입력 버튼 눌렀을 때 예약자 정보 비우기
+	$("#resetBtn").click(function(){
+		$("#bookForm").find(".reset").val("");
+		$("#bookForm").find(".reset").prop('checked', false);
+		$("#bookForm").find(".reset").removeAttr('value');
+	});
+	
+	// 세션 로그인 정보의 성별을 가져와서 라디오버튼 체크하기
+	const genderVal = $('#genderVal').val();
+	if (genderVal === '여자') {
+	  $('#female').prop('checked', true);
+	} else if (genderVal === '남자') {
+	  $('#male').prop('checked', true);
+	}
+});
+</script>
+</head>
+<body>
+	<div class="container">
+		<form action="book.do" method="post" id="bookForm">
+			<input id="id" name="id" type="hidden" value="${login.id }"><br/>
+			<input id="genderVal" type="hidden" value="${member.gender }"><br/>
+			
+			<!-- 투어 상세보기에서 예약하기로 넘어 왔을 때 -->
+			<c:if test="${empty list }">
+				<input id="tourNo" name="tourNo" type="hidden" value="${param.no }" readonly> <br/>
+				<h2>투어정보</h2>
+				투어이름 : ${vo.title }<br/>
+				대인: <input id="peopleA" name="peopleA" value="${param.peopleA }" readonly> <br/>
+				소인: <input id="peopleB" name="peopleB" value="${param.peopleB }" readonly> <br/>
+				투어가격: <input id="tourPrice" name="tourPrice" value="${param.tourPrice }" readonly> <br/>
+				날짜: <input id="day" name="day" value="${param.day }" type="date" readonly> <br/>
+				<hr/>
+			</c:if>
+			
+			<!-- 장바구니에서 예약하기로 넘어왔을 때 -->
+			<c:if test="${!empty list }">
+				<h2>장바구니에서 가져온 투어정보</h2>
+				<c:forEach items="${list }" var="list">
+					장바구니번호 : <input id="cartNo" name="cartNos" value="${list.no }"><br/>			
+					<span>투어이름 : ${list.title }</span><br/>
+					<span>투어지역 : ${list.region }</span><br/>
+					<span>대인 : ${list.peopleA }</span><br/>
+					<span>소인 : ${list.peopleB }</span><br/>
+					투어가격: <input id="tourPrice" name="tourPrice" value="${list.tourPrice }" readonly> <br/>
+					<span>날짜 : <fmt:formatDate value="${list.day }" pattern="yyyy-MM-dd"/></span><br/>
+					<hr/>
+				</c:forEach>
+			</c:if>
+
+			
+			<h2>예약자정보</h2>
+			<input type="button" id="resetBtn" value="새로입력"><br/>
+			이름 : <input id="name" class="reset" name="name" value="${member.name }"><br/>
+			
+			<label for="gender">성별</label>
+			<input class="reset" type="radio" id="female" name="gender" value="여자">여자
+			<input class="reset" type="radio" id="male" name="gender" value="남자">남자
+			<br/>
+			이메일 : <input id="email" class="reset" name="email" value="${member.email }" ><br/>
+			연락처 : <input id="tel"class="reset"  name="tel" value="${member.tel }"><br/>	
+			<hr/>
+			<h2>결제수단</h2>
+			<label for="payMethod">결제방법</label>
+			<input type="radio" id="craditCard" name="payMethod" value="신용카드">신용카드
+			<input type="radio" id="'account" name="payMethod" value="무통장입금">무통장입금
+			<br/>
+			총가격 : <input id="payPrice" name="payPrice" value="0" readonly>원<br/>
+			<br/>
+			<button id="bookBtn" class="btn btn-default btn-xl">예약하셈</button>
+			<button id="cancelBtn" class="btn btn-default btn-xl" type="button" onclick="history.back()">취소하셈</button>
+		</form>
+		
+	</div>
+</body>
+</html>

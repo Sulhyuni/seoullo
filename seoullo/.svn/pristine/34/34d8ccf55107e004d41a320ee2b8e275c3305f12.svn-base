@@ -1,0 +1,71 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pageNav" tagdir="/WEB-INF/tags"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style type="text/css">
+textarea:focus {
+  outline: none;
+}
+button:focus {
+  outline: none;
+}
+input:focus {
+  outline: none;
+}
+</style>
+</head>
+<body>
+	<div class="container">
+		
+		<div>
+			<div style="margin: 10px 0">
+				<span style="font-size: 12px">예약번호 : ${view.no }</span>
+				<a href="/book/list.do">
+					<button class="btn-default btn-xs" style="float: right;">
+						예약리스트
+					</button>
+				</a>
+			</div>
+			
+			<!-- 예약자 정보 1번만 -->
+			<hr style="margin: 5px 0">
+			<div style="text-align: center;">예약자정보</div>
+			<hr style="margin: 5px 0">
+			
+				<div>이름 - ${view.name }</div>
+				<div>성별 - ${view.gender }</div>
+				<div>이메일 - ${view.email}</div>
+				<div>연락처 - ${view.tel}</div>
+				<div>예약일자 - <fmt:formatDate pattern="yyyy-MM-dd" value="${view.bookDate }"/></div>
+				<div>결제금액 - ${view.payPrice}</div>
+				<div>결제수단 - ${view.payMethod}				
+					<c:if test="${view.payMethod eq '무통장입금'}">
+						<span> / 입금 하실 곳 : 농협 101-12345-12345-12 김이젠 </span>
+					</c:if>
+				</div>
+				<div>결제상태 - ${view.payStatus}</div>
+			
+			<!-- 투어정보 여러개 -->
+			<hr style="margin: 5px 0">
+			<div style="text-align: center;">투어정보</div>
+			<hr style="margin: 5px 0">
+			
+			<c:forEach items="${view.bookDetailList }" var="vo">
+				<div>투어이미지 - ${vo.thumbnail }</div>
+				<div>투어제목 - ${vo.title }</div>
+				<div>투어지역 - ${vo.region }</div>
+				<div>투어날짜 - <fmt:formatDate pattern="yyyy-MM-dd" value="${vo.day }"/></div>
+				<div>투어인원 - 대인 : ${vo.peopleA } | 소인 : ${vo.peopleB }</div>
+				<div>예약상태 - ${vo.bookStatus }</div>
+			<hr style="margin: 5px 0">
+			</c:forEach>
+		</div>
+	</div>
+</body>
+</html>

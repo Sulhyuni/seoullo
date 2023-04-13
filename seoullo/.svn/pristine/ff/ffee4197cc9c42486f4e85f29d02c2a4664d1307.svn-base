@@ -1,0 +1,123 @@
+package com.seoullo.tour.controller;
+
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.seoullo.tour.service.TourService;
+import com.seoullo.tour.vo.ScheduleVO;
+import com.seoullo.tour.vo.TourVO;
+import com.seoullo.tour.vo.TourdateVO;
+import com.seoullo.tour.vo.TourpointVO;
+import com.webjjang.util.PageObject;
+
+import lombok.extern.log4j.Log4j;
+
+@Controller
+@RequestMapping("/tour")
+@Log4j
+public class TourController {
+
+	@Autowired
+	@Qualifier("TourServiceImpl")
+	private TourService service;
+
+	@RequestMapping("/list.do")
+	public String list(PageObject pageObject, Model model) {
+		model.addAttribute("list", service.list(null, null, 1, null, null));
+		return "tour/list";
+	}
+
+	@RequestMapping("/view.do")
+	public String view(Long no, Model model) {
+		model.addAttribute("vo", service.view(no, 1));
+		return "tour/view";
+	}
+
+	@GetMapping("/write.do")
+	public String write(Model model) {
+		return "tour/write";
+	}
+
+	@PostMapping("/write.do")
+	public String write(TourVO vo, int[] count, String[] day, Integer[] maxNum, Integer[] priceA, Integer[] priceB,
+			Integer[] dayNum, Integer[] starthour, Integer[] startminute, String[] schedule, String[] schDescription,
+			String[] pointImage, String[] pointTitle, String[] pointContent, String[] tag, String[] checkpoint,
+			Model model) {
+		try {
+			// tourdateList 세팅
+			List<TourdateVO> tourdateList = new ArrayList<TourdateVO>();
+			DateFormat sdf = new SimpleDateFormat("yyyy-mm-dd");
+			for (int i = 0; i < count[0]; i++) {
+				TourdateVO tourdateVO = new TourdateVO();
+				tourdateVO.setDay(sdf.parse(day[i]));
+				tourdateVO.setMaxNum(maxNum[i]);
+				tourdateVO.setPriceA(priceA[i]);
+				tourdateVO.setPriceB(priceB[i]);
+				System.out.println(tourdateVO);
+				tourdateList.add(tourdateVO);
+			}
+			vo.setTourdateList(tourdateList);
+
+			// scheduleList 세팅
+			List<ScheduleVO> scheduleList = new ArrayList<ScheduleVO>();
+			int scheduleNum;
+			int idx = 0;
+			for (int i = 0; i < count[1]; i++) {
+				scheduleNum = 0;
+				for (int j = 0; j < count[2]; j++) {
+					ScheduleVO scheduleVO = new ScheduleVO();
+					scheduleVO.setDayNum(dayNum[i]);
+					scheduleVO.setScheduleNum(++scheduleNum);
+					scheduleVO.setStarthour(starthour[idx]);
+					scheduleVO.setStartminute(startminute[idx]);
+					scheduleVO.setSchedule(schedule[idx]);
+					scheduleVO.setDescription(schDescription[idx++]);
+					scheduleList.add(scheduleVO);
+				}
+			}
+			vo.setScheduleList(scheduleList);
+
+			// tourpoint 세팅
+			List<TourpointVO> tourpointList = new ArrayList<TourpointVO>();
+			for (int i = 0; i < count[3]; i++) {
+				TourpointVO tourpointVO = new TourpointVO();
+				tourpointVO.setImage(pointImage[i]);
+				tourpointVO.setTitle(pointTitle[i]);
+				tourpointVO.setContent(pointContent[i]);
+				tourpointList.add(tourpointVO);
+			}
+			vo.setTourpointList(tourpointList);
+			
+			//tag 세팅
+			List<String> tagList = new ArrayList<String>(); 
+			for (int i=0;i<count[4]; i++) {
+				tagList.add(tag[i]);
+			}
+			vo.setTagList(tagList);
+			
+			//checkpoint 세팅
+			List<String> checkpointList = new ArrayList<String>(); 
+			for (int i=0;i<count[5]; i++) {
+				checkpointList.add(checkpoint[i]);
+			}
+			vo.setCheckpointList(checkpointList);
+
+			model.addAttribute("vo", vo);
+			service.write(vo);
+		} catch (ParseException e) {
+			System.out.println("parse 안됨");
+		}
+		return "tour/write";
+	}
+}

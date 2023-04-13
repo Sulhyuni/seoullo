@@ -1,0 +1,8 @@
+package com.seoullo.event.vo;
+
+public class ImgfileVO {
+	
+	private long apply_no,e_no;
+	private String e_status,id;
+
+}

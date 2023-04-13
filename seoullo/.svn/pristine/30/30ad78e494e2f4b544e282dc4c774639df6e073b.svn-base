@@ -1,0 +1,40 @@
+package com.seoullo.siteqna.service;
+
+import java.util.List;
+
+import com.seoullo.siteqna.vo.SiteQnaVO;
+
+public interface SiteQnaService {
+
+	
+			//리스트
+			public List<SiteQnaVO>list();
+			
+			//보기
+			public SiteQnaVO view(long siteNo, long inc);
+			
+			
+			//질문-작성
+			public Integer write(SiteQnaVO vo);
+			
+			
+			//수정
+			public Integer update(SiteQnaVO vo);
+			
+			//삭제
+			public Long delete(long siteNo);
+			
+			
+//답변----------------------------------------------------------------------
+			//보기
+			public SiteQnaVO answerView(long aNo);
+			
+			//답변-작성
+			public Integer answerWrite(SiteQnaVO aVo);
+			
+//			//수정
+//			public Integer answerUpdate(SiteQnaVO aVo);
+			
+			//삭제
+			public Long answerDelete(long aNo);
+}

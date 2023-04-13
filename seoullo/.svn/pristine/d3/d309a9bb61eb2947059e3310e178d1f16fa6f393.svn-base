@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE XML>
+<!-- 작성자 : 이영환 -->
+<!-- 작성일 : 2020-06-30 -->
+<!-- sitemesh 설정에 대한 정의 xml 파일 -->
+<!-- 주의할 점 - 아래 내용을 지키지 않으면 태그 자체가 사라진다.
+     1. JSP를 만들 때 반드시 HTML - HEAD- TITLE,  HTML - Body 구조로 만들어야만 인식을 한다. 태그 안에 작성해야만한다.
+     2. HTML 태그, HEAD 태그, Body 태그는 딱 한번만 나와야 한다. 2번 이상 나오면 덮어 쓰기가 된다. -->
+<sitemesh>
+	<!-- 레이아웃 꾸미기는 /WEB-INF/decorators.xml로 정의 -->
+	<property name="decorators-file" value="/WEB-INF/decorators.xml" />
+	<!-- 위에 property로 정의된 xml를 포함 시킨다. -->
+	<excludes file="${decorators-file}" />
+
+	<!-- HTML 분해 객체 선택 -->
+	<page-parsers>
+		<parser content-type="text/html"
+			class="com.opensymphony.module.sitemesh.parser.HTMLPageParser" />
+	</page-parsers>
+
+	<!-- HTML 조립기 -->
+	<decorator-mappers>
+		<mapper
+
+			class="com.opensymphony.module.sitemesh.mapper.ConfigDecoratorMapper">
+			<param name="config" value="${decorators-file}" />
+		</mapper>
+	</decorator-mappers>
+</sitemesh>

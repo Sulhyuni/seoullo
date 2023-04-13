@@ -1,0 +1,66 @@
+package com.seoullo.qna.mapper;
+
+import java.util.List;
+
+import com.seoullo.qna.vo.QnaVO;
+import com.webjjang.util.PageObject;
+
+public interface QnaMapper {
+//DB 처리 /구체적으로
+	
+	
+	//리스트
+	public List<QnaVO>list(PageObject pageObject);
+	
+	//검색
+	public long getTotalRow(PageObject pageObject);
+	
+	//보기
+	public QnaVO view(long qnaNo);
+	
+	//조회수
+	public long increase(long no);
+	
+	//질문작성
+	public  Integer write(QnaVO vo);
+
+	//수정
+	public  Integer update(QnaVO vo);
+	
+	//질문삭제
+	public Long delete(long refNo);
+
+	
+	
+	//답변작성
+	public  Integer answer(QnaVO vo);
+	
+	//순서번호 증가 ordNo
+	public  Integer increaseOrdNo(QnaVO vo);
+	
+	//응답상태 변경
+	public  Integer statusRefNo(QnaVO vo);
+	
+	//답변수정
+	public  Integer answerUpdate(QnaVO vo);
+	
+	//답변삭제
+	public  Long answerDelete(long qnaNo);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

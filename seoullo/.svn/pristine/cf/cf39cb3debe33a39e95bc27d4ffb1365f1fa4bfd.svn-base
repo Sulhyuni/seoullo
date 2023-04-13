@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seoullo.review.mapper.ReviewMapper">
+	
+	<!-- 후기 리스트 -->
+	<select id="list" resultType="com.seoullo.review.vo.ReviewVO">
+	select revNo, title, rating, id, nickname, gradeNo, gradeName, writeDate, hit, refNo, ordNo, replyCnt, likeCnt, tourNo, tourTitle, tourThumbnail
+	from (
+		select rownum rnum, revNo, title, rating, id, nickname, gradeNo, gradeName, writeDate, hit, refNo, ordNo, replyCnt, likeCnt, tourNo, tourTitle, tourThumbnail
+		from (
+			select r.revNo, r.title, r.rating, r.id, m.nickname, m.gradeNo, g.gradeName, r.writeDate, r.hit, r.refNo, r.ordNo, r.levNo, r.replyCnt, r.likeCnt, r.tourNo, t.title as tourTitle, t.thumbnail as tourThumbnail
+			from review r, member m, grade g, tour t
+			where 1 = 1
+			<include refid="search" />
+			and r.id = m.id
+			and m.gradeNo = g.gradeNo
+			and r.tourNo = t.no
+			order by r.refNo desc, r.ordNo asc
+		)
+	)
+	where rnum between #{startRow} and #{endRow}
+	</select>
+	
+	<select id="getTotalRow" resultType="Long">
+	select count(*)
+	from review r
+	<include refid="searchTable"></include>
+	where 1 = 1
+	<include refid="search"></include>
+	<include refid="searchJoin"></include>
+	</select>
+	
+	<sql id="search">
+		<if test="word !=null and word !=''.toString()">
+			and 1 = 0
+			<if test="key.indexOf('t'.toString()) >= 0">
+				or r.title like '%' || #{word} || '%'
+			</if>
+			<if test="key.indexOf('c'.toString()) >= 0">
+				or r.content like '%' || #{word} || '%'
+			</if>
+			<if test="key.indexOf('n'.toString()) >= 0">
+				or nickname like '%' || #{word} || '%'
+			</if>
+		</if>
+	</sql>
+	
+	<sql id="searchJoin">
+		<if test="word != null and word != ''.toString()">
+		and r.id = m.id
+		and m.gradeNo = g.gradeNo
+		and r.tourNo = t.no 
+		</if>
+	</sql>
+	
+	<sql id="searchTable">
+		<if test="word != null and word != ''.toString()">
+		, member m, grade g, tour t
+		</if>
+	</sql>
+	
+	<!-- 후기 보기 -->
+	<select id="view" resultType="com.seoullo.review.vo.ReviewVO">
+	select r.revNo, r.title, r.content, r.rating, r.id, m.nickname, m.gradeNo, g.gradeName, r.writeDate, r.hit, r.refNo, r.ordNo, r.levNo, r.replyCnt, r.likeCnt, r.tourNo, r.bookNo, t.title as tourTitle, t.thumbnail as tourThumbnail, t.guideId
+	from review r, member m, grade g, tour t
+	where (revNo = #{revNo}) and r.id = m.id and m.gradeNo = g.gradeNo and r.tourNo = t.no
+	</select>
+	
+	<!-- 후기 조회 수 증가 -->
+	<update id="increase">
+	update review set hit = hit + 1
+	where revNo = #{revNo}
+	</update>
+	
+	<!-- 후기 등록 -->
+	<insert id="writeReview">
+	<selectKey keyProperty="revNo" order="BEFORE" resultType="Long">
+	select review_seq.nextval from dual
+	</selectKey>
+	insert into review(revNo, tourNo, title, content, rating, id, refNo, ordNo, levNo, bookNo)
+	values(#{revNo}, #{tourNo}, #{title}, #{content}, #{rating}, #{id}, #{revNo}, 1, 0, #{bookNo})
+	</insert>
+	
+	<!-- 후기 답글 등록 -->
+	<!-- tourNo 수정하기 -->
+	<insert id="writeAnswer">
+	insert into review(revNo, tourNo, title, content, id, refNo, ordNo, levNo)
+	values(review_seq.nextval, #{tourNo}, #{title}, #{content}, #{id}, #{refNo}, #{ordNo}, 1)
+	</insert>
+	
+	<!-- 후기 답글 순서 번호 증가 -->
+	<update id="increaseOrdNo">
+	update review set ordNo = ordNo + 1
+	where refNo = #{refNo} and ordNo >= #{ordNo}
+	</update> 
+	
+	<!-- 후기 수정 -->
+	<update id="update">
+	update review set title = #{title}, content = #{content}, rating = #{rating}
+	where revNo = #{revNo}
+	</update>
+	
+	<!-- 후기 삭제 -->
+	<delete id="deleteReview">
+	delete from review
+	where refNo = #{refNo}
+	</delete>
+	
+	<!-- 후기 답글 삭제 -->
+	<delete id="deleteAnswer">
+	delete from review
+	where revNo = #{revNo}
+	</delete>
+	
+	<!-- 후기 이미지 등록 -->
+	<insert id="writeImage">
+	insert into review_image(imgNo, revNo, imgName, thumbnail)
+	values(review_image_seq.nextval, #{revNo}, #{imgName}, #{thumbnail})
+	</insert>
+	
+	<!-- 후기 이미지 보기 -->
+	<select id="viewImage" resultType="com.seoullo.review.vo.ReviewVO">
+	select imgNo, imgName, thumbnail
+	from review_image
+	where revNo = #{revNo}
+	</select>
+	
+	<!-- 후기 이미지 수정 -->
+	<update id="updateImage">
+	update review_image set imgName = #{imgName}
+	where imgNo = #{imgNo}
+	</update>
+	
+	<!-- 후기 썸네일 해제 -->
+	<update id="updateImageUnthm">
+	update review_image set thumbnail = 0
+	where revNo = #{revNo}
+	</update>
+	
+	<!-- 후기 썸네일 지정 -->
+	<update id="updateImageThm">
+	update review_image set thumbnail = 1
+	where imgNo = #{imgNo}
+	</update>
+	
+	<!-- 후기 이미지 삭제 -->
+	<delete id="deleteImage">
+	delete from review_image
+	where imgNo = #{imgNo}
+	</delete>
+	
+	<!-- 후기 추천 여부 확인, 데이터가 존재하는지... 일종의 검색  -->
+	<select id="likeCheck" resultType="Boolean">
+	select revNo from review_like where id = #{id} and revNo = #{revNo}
+	</select>
+	
+	<!-- 후기 추천 추가 -->
+	<insert id="writeLike">
+	insert into review_like(id, revNo)
+	values(#{id}, #{revNo})
+	</insert>
+
+	<!-- 후기 추천 취소 -->
+	<delete id="deleteLike">
+	delete from review_like
+	where id = #{id} and revNo = #{revNo}
+	</delete>
+	
+	<!-- 탭 내 후기 리스트 -->
+	<select id="listTab" resultType="com.seoullo.review.vo.ReviewVO">
+	select revNo, title, rating, id, nickname, gradeNo, gradeName, writeDate, hit, refNo, ordNo, replyCnt, likeCnt
+	from (
+		select rownum rnum, revNo, title, rating, id, nickname, gradeNo, gradeName, writeDate, hit, refNo, ordNo, replyCnt, likeCnt
+		from (
+			select r.revNo, r.title, r.rating, r.id, m.nickname, m.gradeNo, g.gradeName, r.writeDate, r.hit, r.refNo, r.ordNo, r.levNo, r.replyCnt, r.likeCnt
+			from review r, member m, grade g
+			where r.id = m.id and m.gradeNo = g.gradeNo and tourNo = #{tourNo}
+			<include refid="searchTab" />
+			order by r.refNo desc, r.ordNo asc
+		)
+	)
+	where rnum between #{pageObject.startRow} and #{pageObject.endRow}
+	</select>
+	
+	<sql id="searchTab">
+		<if test="pageObject.word !=null and pageObject.word !=''.toString()">
+			where 1 = 0
+			<if test="pageObject.key.indexOf('t'.toString()) >= 0">
+				or title like '%' || #{pageObject.word} || '%'
+			</if>
+			<if test="pageObject.key.indexOf('c'.toString()) >= 0">
+				or content like '%' || #{pageObject.word} || '%'
+			</if>
+		</if>
+	</sql>
+
+</mapper>

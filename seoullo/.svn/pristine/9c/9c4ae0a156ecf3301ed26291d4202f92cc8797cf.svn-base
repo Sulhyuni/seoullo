@@ -1,0 +1,5 @@
+package com.seoullo.book.service;
+
+public interface BookService {
+
+}

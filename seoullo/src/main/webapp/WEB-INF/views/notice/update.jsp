@@ -1,0 +1,58 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+    pageEncoding="UTF-8"%>
+        <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
+<%@ taglib prefix="pageNav" tagdir="/WEB-INF/tags" %>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>공지사항 수정하기</title>
+<script type="text/javascript">
+$(function(){
+	$("#cancelBtn").click(function(){
+		history.back();
+	});
+});
+
+</script>
+<script>
+	document.getElementById("startDate").value = "<fmt:formatDate pattern='yyyy/MM/dd' value='${vo.startDate}' />";
+	document.getElementById("endDate").value = "<fmt:formatDate pattern='yyyy/MM/dd' value='${vo.endDate}' />";
+</script>
+</head>
+<body>
+<div class="container">
+		<form action="update.do" method="post">
+		<input type="hidden" name="perPageNum" value="${param.perPageNum }">
+		<input type="hidden" name="page" value="${param.page }">
+		<input type="hidden" name="key" value="${param.key }">
+		<input type="hidden" name="word" value="${param.word }">
+			<div class="form-group">
+			<label>번호</label>
+			<input name="no" class="form-control" readonly="readonly" value="${vo.no }">
+		</div>
+			<div class="form-group">
+				<label for="title">제목</label>
+				<input class="form-control" id="title" name="title" value="${vo.title }">
+			</div>
+			<div class="form-group">
+				<label for="content">내용</label>
+				<textarea rows="5" class="form-control" id="content" name="content" >${vo.content }</textarea>
+				
+			</div>
+			<div class="form-group">
+				<label for="startDate">공지시작일</label>
+				<input class="form-control" id="startDate" name="startDate" value= <fmt:formatDate pattern="yyyy/MM/dd" value="${vo.startDate }" />>
+			</div>
+			<div class="form-group">
+				<label for="endDate">공지종료일</label>
+				<input class="form-control" id="endDate" name="endDate" value= <fmt:formatDate pattern="yyyy/MM/dd" value="${vo.endDate }" />>
+			</div>
+			
+			<button class="btn btn-default">수정</button>
+			<button type="button" class="btn btn-default" id="cancelBtn">취소</button>
+	</form>
+</div>
+</body>
+</html>

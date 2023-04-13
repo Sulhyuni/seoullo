@@ -1,0 +1,132 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"  "https://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.seoullo.siteqna.mapper.SiteQnaMapper">
+
+
+<!-- 리스트 -->
+<select id="list" resultType="com.seoullo.siteqna.vo.SiteQnaVO">
+     select siteNo, title, id, status,hit, writeDate, refNo, ordNo, levNo
+	from(
+	    select rownum rnum, siteNo,  title, id, status,hit, writeDate,refNo, ordNo, levNo
+	    from(
+	        	select DISTINCT s.siteNo,s.title, m.id, s.status, s.hit, s.writeDate, s.refNo, s.ordNo, s.levNo
+	            from siteqna s,  member m
+	            where 1=1
+	            <include refid="search" />
+	            and m.id = s.id
+	            order by s.refNo desc, s.ordNo asc
+	        )
+	     )  
+		 where rnum between #{startRow} and #{endRow}
+      
+ </select>
+ 
+ 
+ 
+<!-- pageObject -->
+<select id="getTotalRow" resultType="Long">
+		select count(*)
+		from siteqna s
+		<include refid="searchTable" />
+		where 1=1
+	<include refid="search"/>
+	<include refid="searchJoin" />
+</select>
+<!-- 검색 -->
+	<sql id="search">
+		<if test="word !=null and word !=''.toString()">
+			AND 1 = 0
+			<if test="key.indexOf('t'.toString()) >= 0">
+				or s.title like '%' || #{word} || '%'
+			</if>
+			<if test="key.indexOf('c'.toString()) >= 0">
+				or s.content like '%' || #{word} || '%'
+			</if>
+			<if test="key.indexOf('s'.toString()) >= 0">
+				or s.status like  #{word} 
+			</if>
+		</if>
+	</sql>
+	
+	<sql id="searchJoin">
+		<if test="word != null and word != ''.toString()">
+            and m.id =  s.id 
+		</if>
+	</sql>
+	
+	<sql id="searchTable">
+		<if test="word != null and word != ''.toString()">
+			, member m
+		</if>
+	</sql>
+	
+ 
+<!--  질문보기 -->
+<select id="view" resultType="com.seoullo.siteqna.vo.SiteQnaVO">
+	select s.siteNo,s.title, s.content, m.id, s.status,s.hit, s.writeDate, s.refNo, s.ordNo, s.levNo
+	from siteqna s,  member m
+	where s.siteNo = #{siteNo} and s.id=m.id  
+	order by s.siteNo asc
+</select>
+<!-- 조회수증가 -->
+<update id="increase">
+	update siteqna set hit = hit+1
+	where siteNo = #{siteNo}
+</update>
+ 
+<!-- 질문작성 -->
+<insert id="write">
+	insert into siteqna (siteNo, title, content, id,refNo, ordNo, levNo)
+	values(siteqna_seq.nextval, #{title}, #{content}, #{id}, siteqna_seq.nextval, siteqna_seq.nextval, 0)
+</insert>
+
+<!-- 질문수정 -->
+<update id="update">
+	update siteqna set title=#{title}, content=#{content}
+	where siteNo=#{siteNo}
+</update>
+
+<!-- 질문삭제  -->
+<delete id="delete">
+	delete from siteqna 
+	where refNo=#{refNo}
+</delete>
+
+
+
+<!-- 답변작성 -->
+
+<!-- answer --> 
+<insert id="answer">
+	insert into siteqna (siteNo, title, content, id, refNo, ordNo, levNo,status)
+	values(siteqna_seq.nextval, #{title}, #{content}, #{id}, #{refNo}, #{ordNo}, 1,'응답')
+</insert>
+<update id="increaseOrdNo">
+	update siteqna set ordNo = ordNo+1
+	where refNo =#{refNo} and ordNo >=#{ordNo} 
+</update>
+<!-- 답변달면 상태->응답상태로 변경 -->
+ <update id="statusRefNo">
+	update siteqna set status='응답'
+	where refNo =#{refNo} 
+</update>
+
+
+ 
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

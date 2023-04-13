@@ -1,0 +1,16 @@
+package com.seoullo.cart.mapper;
+
+import java.util.List;
+
+import com.seoullo.cart.vo.CartVO;
+
+public interface CartMapper {
+	
+	public List<CartVO> list();
+	
+	public int add(CartVO vo);
+	
+	public int update(CartVO vo);
+	
+	public int delete(long no);
+}

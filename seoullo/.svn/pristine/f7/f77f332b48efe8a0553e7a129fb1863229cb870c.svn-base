@@ -1,0 +1,17 @@
+package com.seoullo.tour.mapper;
+
+import java.util.List;
+
+import org.apache.ibatis.annotations.Param;
+
+import com.seoullo.tour.vo.TourVO;
+import com.webjjang.util.PageObject;
+
+public interface TourMapper {
+
+	public List<TourVO> list(@Param("tag") String tag, @Param("region") String region, @Param("word") String word, @Param("order") String order,
+			@Param("pageObject") PageObject pageObject);
+
+	public List<TourVO> listByGuide(@Param("id") String id, @Param("pageObject") PageObject pageObject);
+
+}

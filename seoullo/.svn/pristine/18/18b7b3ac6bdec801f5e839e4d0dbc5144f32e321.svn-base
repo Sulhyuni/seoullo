@@ -1,0 +1,67 @@
+package com.seoullo.anonymous.service;
+
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
+
+import com.seoullo.anonymous.mapper.AnonymousMapper;
+import com.seoullo.anonymous.vo.AnonymousVO;
+
+import lombok.Setter;
+
+@Service
+@Qualifier("anonymousServiceImpl")
+public class AnonymousServiceImpl implements AnonymousService{
+	
+	//service 안에 mapper 있음
+		@Setter(onMethod_= @Autowired)
+		private AnonymousMapper mapper;
+		
+		
+		
+
+	@Override
+	public List<AnonymousVO> list() {
+		return mapper.list();
+	}
+
+	//글본기 + 조회수
+	@Override
+	public AnonymousVO view(long anonyNo, long inc) {
+		if(inc==1)
+			mapper.increase(anonyNo);
+		return mapper.view(anonyNo);
+	}
+
+	@Override
+	public Integer write(AnonymousVO vo) {
+		return mapper.write(vo);
+	}
+
+	@Override
+	public Integer update(AnonymousVO vo) {
+		return mapper.update(vo);
+	}
+
+	@Override
+	public Long delete(long anonyNo) {
+		return mapper.delete(anonyNo);
+	}
+	
+//===========================================================
+//	좋아요 등록
+	@Override
+	public int like(AnonymousVO vo) {
+		return mapper.like(vo);
+	}
+
+	@Override
+	public int unlike(AnonymousVO vo) {
+		return mapper.unlike(vo);
+	}
+ 
+
+ 
+
+}

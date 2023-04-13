@@ -1,0 +1,10 @@
+package com.seoullo.member.mapper;
+
+import com.seoullo.member.vo.MemberVO;
+
+public interface MemberMapper {
+	
+	public MemberVO login(MemberVO vo);
+	
+
+}

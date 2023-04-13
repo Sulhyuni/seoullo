@@ -1,0 +1,47 @@
+package com.seoullo.review.mapper;
+
+import java.util.List;
+
+import com.seoullo.review.vo.ReviewVO;
+import com.webjjang.util.PageObject;
+
+public interface ReviewMapper {
+
+	// 후기 리스트
+	public List<ReviewVO> list(PageObject pageObject);
+	public long getTotalRow(PageObject pageObject);
+
+	// 후기 보기
+	public ReviewVO view(long no);
+	public int increase(long no);
+
+	// 후기 등록
+	public int write(ReviewVO vo);
+
+	// 후기 수정
+	public int update(ReviewVO vo);
+
+	// 후기 삭제
+	public int delete(ReviewVO vo);
+	
+	// 후기 이미지 보기
+	public List<ReviewVO> viewImage(long no);
+	
+	// 후기 이미지 등록
+	public int writeImage(ReviewVO vo);
+	
+	// 후기 이미지 수정
+	public int updateImage(ReviewVO vo);
+	public int updateImageUnthm(long revNo);
+	public int updateImageThm(long imgNo);
+	
+	// 후기 이미지 삭제
+	public int deleteImage(long imgNo);
+
+	// 후기 추천 추가
+	public int writeLike(ReviewVO vo);
+
+	// 후기 추천 취소
+	public int deleteLike(ReviewVO vo);
+
+}

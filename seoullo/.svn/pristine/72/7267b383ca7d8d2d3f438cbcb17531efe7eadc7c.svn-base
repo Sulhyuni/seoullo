@@ -1,0 +1,27 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8"
+	pageEncoding="UTF-8"%>
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>후기</title>
+</head>
+<body>
+	<div class="container">
+		<form action="writeAnswer.do" method="post" id="writeAnswerForm">
+			<input type="hidden" name="id" value="${login.id }">
+			<input type="hidden" name="refNo" value="${vo.refNo }">
+			<input type="hidden" name="ordNo" value="${vo.ordNo }">
+			<div class="form-group">
+				<label>제목</label> <input name="title" id="title"
+					class="form-control" value="[답글] ">
+			</div>
+			<div class="form-group">
+				<label>내용</label>
+				<textarea rows="10" name="content" class="form-control" id="content" style="resize: none"></textarea>
+			</div>
+			<button>등록</button>
+		</form>
+	</div>
+</body>
+</html>

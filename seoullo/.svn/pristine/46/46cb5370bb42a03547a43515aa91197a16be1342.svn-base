@@ -1,0 +1,26 @@
+package com.seoullo.book.vo;
+
+import java.util.Date;
+
+import org.springframework.format.annotation.DateTimeFormat;
+
+import lombok.Data;
+
+@Data
+public class BookDetailVO {
+	
+	// bookDetail 테이블
+	private long no, bookNo; // 예약상세번호, 예약번호
+	private long peopleA, peopleB, tourPrice; // 대인, 소인, 예약금액 (투어금액 * 인원)
+	private String bookStatus, review; // 예약상태, 리뷰작성가능여부
+	
+	// tour 테이블
+	private long tourNo; // 투어번호
+	private String type, title, region, thumbnail, guideId; // 종류, 제목, 지역, 썸네일, 가이드아이디
+	
+	// tourDate 테이블
+	@DateTimeFormat(pattern = "yyyy-MM-dd")
+	private Date day; // 투어일자
+	private String status; // 예약가능 상태 (예약가능, 마감)
+	private long reserveNum, maxNum, priceA, priceB; // 현재예약인원, 최대인원, 대인가격, 소인가격
+}
